@@ -17,18 +17,15 @@ Pushing to `main` deploys automatically via GitHub Actions (`.github/workflows/d
 | Event | What happens |
 |---|---|
 | Push to `main` | Hosting deployed to the live site + Firestore rules deployed |
-| Pull request | Hosting deployed to a temporary preview URL (7 days), posted as a PR comment |
 | Manual (Actions tab → Run workflow) | Same as push to `main` |
 
 ### One-time setup
 
-1. Create a service account key. Easiest: run locally
-   ```bash
-   npx firebase-tools init hosting:github
-   ```
-   and pick this repo — it creates the service account and stores it as the `FIREBASE_SERVICE_ACCOUNT_QUARTER_BY_QUARTER` repo secret. (Decline when it offers to overwrite the workflow file.)
-   Or manually: Google Cloud Console → IAM → Service accounts → create one with roles **Firebase Hosting Admin**, **Firebase Rules Admin**, **API Keys Viewer**, **Service Account User** → add a JSON key → paste the JSON into GitHub → Settings → Secrets and variables → Actions as `FIREBASE_SERVICE_ACCOUNT_QUARTER_BY_QUARTER`.
-2. If you want Google sign-in to work on PR preview URLs, add the preview domain under Firebase console → Authentication → Settings → Authorized domains.
+GitHub needs a key to deploy to Firebase:
+
+1. Google Cloud Console → IAM & Admin → Service accounts (project `quarter-by-quarter`) → **Create service account** named `github-deploy`, with roles **Firebase Admin**, **API Keys Viewer**, **Service Usage Consumer**.
+2. Open it → **Keys** → **Add key** → **JSON** → a file downloads.
+3. GitHub repo → Settings → Secrets and variables → Actions → **New repository secret** named `FIREBASE_SERVICE_ACCOUNT_QUARTER_BY_QUARTER`, value = the whole JSON file. Then delete the downloaded file.
 
 ### Manual deploy
 
