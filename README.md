@@ -6,6 +6,8 @@ A weekly plan for memorizing one quarter (rubʿ) of the Qur'an at a time, with d
 
 - **`public/index.html`** — the whole app (HTML, CSS, JS in one file). Progress is kept in `localStorage`.
 - **Cloud sync (optional)** — "Save my progress with Google" signs in with Firebase Auth and mirrors progress to Firestore at `users/{uid}`. Config is read from `/__/firebase/init.json`, which only Firebase Hosting serves, so on any other host the app silently stays local-only.
+- **Whole Qur'an** — positions are stored as running ayah numbers (1–6236), so a quarter can be any of the 240 standard quarters (rubʿ al-ḥizb) or any custom range, even across sūrahs. Old saves (Āl ʿImrān ayah numbers) are converted automatically on load.
+- **`public/fonts/`** — a copy of Amiri (Arabic letters only) with the tanween marks drawn slightly lower; licence in `OFL.txt`.
 - **`public/sw.js`** — network-first service worker with a cache fallback for offline use. Bump `C='qbq-vN'` when you want to force old caches out.
 - **`firestore.rules`** — each user can only read/write their own document.
 - **`firebase.json` / `.firebaserc`** — Hosting config for the `quarter-by-quarter` Firebase project.

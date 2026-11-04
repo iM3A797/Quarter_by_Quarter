@@ -20,6 +20,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500&display=swap">
 <style>
+/* Amiri, Arabic letters only, with the tanween marks (ً ٌ) drawn slightly lower than stock Amiri,
+   which sets every mark at one fixed height so tanween floats far above short letters like ع and ة.
+   Latin text still comes from the Google Fonts Amiri. Modified copy of Amiri (SIL OFL 1.1). */
+@font-face{font-family:"Amiri QBQ";font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/amiri-qbq-400.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+0870-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:"Amiri QBQ";font-style:normal;font-weight:700;font-display:swap;src:url(/fonts/amiri-qbq-700.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+0870-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
 /* Layout: a pocket agenda. The week strip stays on top, today's session reads as a timed agenda,
    and the quarters + method sit beside it on wide screens and below it on phones. */
 :root{
@@ -38,7 +43,7 @@
   --sky-soft:#e2eff5;
   --rest:#8a948f;
   --display-en:"Newsreader",Georgia,"Times New Roman",serif;
-  --display-ar:"Amiri","Traditional Arabic","Times New Roman",serif;
+  --display-ar:"Amiri QBQ","Amiri","Traditional Arabic","Times New Roman",serif;
   --body:"IBM Plex Sans Arabic","Segoe UI",system-ui,-apple-system,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
@@ -280,6 +285,13 @@ input[type=number]{width:5.2em;font-variant-numeric:tabular-nums}
 .part{background:var(--accent-soft);color:var(--accent);border-radius:8px;padding:4px 10px;font-size:13px;font-variant-numeric:tabular-nums}
 .splits{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
 .splits input{width:4.6em;padding:4px 8px}
+.splits select{padding:4px 8px;max-width:100%}
+.qsel{width:100%;max-width:30em}
+.custom summary{cursor:pointer;font-size:13px;color:var(--accent);width:fit-content}
+.custom-range{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin-top:8px;font-size:13px;color:var(--muted)}
+.custom-range .pair{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;min-width:0}
+.custom-range select{max-width:12em}
+.banner .qsel{flex:1 1 16em}
 .rev{display:grid;grid-template-columns:1.6em minmax(0,1fr);gap:8px;align-items:center}
 .rev .n{width:1.6em;height:1.6em;border-radius:50%;background:var(--slate-soft);color:var(--slate);display:grid;place-items:center;font-size:12px;font-weight:600}
 .rev input{width:100%}
@@ -330,8 +342,7 @@ td.today,th.today{box-shadow:inset 0 -2px 0 var(--gold)}
   <div class="banner" id="banner" hidden>
     <p id="bannerText"></p>
     <div class="row">
-      <span class="row" id="nbInputs"><label for="nbFrom" data-t="fromAyah"></label><input type="number" id="nbFrom" min="1" max="200">
-      <label for="nbTo" data-t="toAyah"></label><input type="number" id="nbTo" min="1" max="200">
+      <span class="row" id="nbInputs"><label for="nbPick" class="visually-hidden" data-t="pickQ"></label><select id="nbPick" class="qsel"></select>
       <button class="toggle" id="nbOk" type="button" data-t="confirm"></button></span>
       <button class="toggle" id="nbHalf2" type="button" data-t="startHalf2" hidden></button>
       <button class="toggle" id="nbRepeat" type="button" data-t="repeatHalf1" hidden></button>
@@ -362,6 +373,8 @@ td.today,th.today{box-shadow:inset 0 -2px 0 var(--gold)}
         <div class="controls" id="dayControls">
           <label for="start" data-t="startAt"></label>
           <select id="start"></select>
+          <label for="len" data-t="lenLbl"></label>
+          <select id="len"></select>
           <button class="toggle" id="busyBtn" type="button" aria-pressed="false"></button>
           <span class="pick"><label for="partPick" id="partPickLbl"></label><select id="partPick"></select></span>
         </div>
@@ -405,7 +418,7 @@ td.today,th.today{box-shadow:inset 0 -2px 0 var(--gold)}
           <div class="diary-row">
             <select id="dSurah" aria-label="Sūrah"></select>
             <input type="text" id="dOther" maxlength="40" hidden>
-            <label for="dAyah" id="dAyahLbl"></label><input type="number" id="dAyah" min="1" max="286" inputmode="numeric">
+            <label for="dAyah" id="dAyahLbl"></label><input type="number" id="dAyah" min="1" inputmode="numeric">
           </div>
           <textarea id="dNote" rows="3" maxlength="600"></textarea>
           <button type="submit" class="toggle save" id="dSave"></button>
@@ -444,10 +457,16 @@ td.today,th.today{box-shadow:inset 0 -2px 0 var(--gold)}
         <div class="q">
           <div class="qh"><strong data-t="newQ"></strong><span data-t="newQwhen"></span></div>
           <div class="range">
-            <span data-t="imran"></span>
-            <label for="from" data-t="fromAyah"></label><input type="number" id="from" min="1" max="200" inputmode="numeric">
-            <label for="to" data-t="toAyah"></label><input type="number" id="to" min="1" max="200" inputmode="numeric">
+            <label for="nPick" class="visually-hidden" data-t="newQ"></label>
+            <select id="nPick" class="qsel"></select>
           </div>
+          <details class="custom" id="nCustom">
+            <summary data-t="customRange"></summary>
+            <div class="custom-range">
+              <span class="pair"><span data-t="fromW"></span><select id="nSf" aria-label="Sūrah"></select><input type="number" id="nAf" min="1" inputmode="numeric" aria-label="Ayah"></span>
+              <span class="pair"><span data-t="toW"></span><select id="nSt" aria-label="Sūrah"></select><input type="number" id="nAt" min="1" inputmode="numeric" aria-label="Ayah"></span>
+            </div>
+          </details>
           <div class="size">
             <span class="size-lbl" data-t="sizeLabel"></span>
             <div class="seg" role="group"><button type="button" class="segb" id="sizeNormal" data-t="sizeNormal"></button><button type="button" class="segb" id="sizeHeavy" data-t="sizeHeavy"></button></div>
@@ -455,25 +474,32 @@ td.today,th.today{box-shadow:inset 0 -2px 0 var(--gold)}
           <p class="hint warn" id="heavyHint" hidden></p>
           <div class="heavy" id="heavyBox" hidden>
             <div class="seg" role="group"><button type="button" class="segb" id="hw1" data-t="week1"></button><button type="button" class="segb" id="hw2" data-t="week2"></button></div>
-            <div class="splits"><label for="h1" data-t="h1ends"></label><input type="number" id="h1" min="1" max="200" inputmode="numeric"></div>
+            <div class="splits"><label for="h1" data-t="h1ends"></label><select id="h1"></select></div>
             <p class="hint" data-t="heavyNote"></p>
           </div>
           <div class="parts" id="parts"></div>
           <div class="splits" id="splits">
-            <label for="s1" data-t="p1ends"></label><input type="number" id="s1" min="1" max="200" inputmode="numeric">
-            <label for="s2" data-t="p2ends"></label><input type="number" id="s2" min="1" max="200" inputmode="numeric">
+            <label for="s1" data-t="p1ends"></label><select id="s1"></select>
+            <label for="s2" data-t="p2ends"></label><select id="s2"></select>
           </div>
           <p class="hint" data-t="splitHint"></p>
         </div>
         <div class="q">
           <div class="qh"><strong data-t="recentQ"></strong><span data-t="recentWhen"></span></div>
           <div class="range">
-            <span data-t="imran"></span>
-            <label for="rFrom" data-t="fromAyah"></label><input type="number" id="rFrom" min="1" max="200" inputmode="numeric">
-            <label for="rTo" data-t="toAyah"></label><input type="number" id="rTo" min="1" max="200" inputmode="numeric">
+            <label for="rPick" class="visually-hidden" data-t="recentQ"></label>
+            <select id="rPick" class="qsel"></select>
           </div>
+          <details class="custom" id="rCustom">
+            <summary data-t="customRange"></summary>
+            <div class="custom-range">
+              <span class="pair"><span data-t="fromW"></span><select id="rSf" aria-label="Sūrah"></select><input type="number" id="rAf" min="1" inputmode="numeric" aria-label="Ayah"></span>
+              <span class="pair"><span data-t="toW"></span><select id="rSt" aria-label="Sūrah"></select><input type="number" id="rAt" min="1" inputmode="numeric" aria-label="Ayah"></span>
+            </div>
+          </details>
           <p class="hint" data-t="recentHint"></p>
         </div>
+        <datalist id="qList"></datalist>
         <div class="q" id="revs">
           <div class="qh"><strong data-t="reviewQ"></strong><span data-t="reviewWhen"></span></div>
         </div>
@@ -515,7 +541,7 @@ const KEY = 'rub-by-rub.v1';
 const T = {
   en: {
     title: 'Quarter by Quarter',
-    lede: 'One new quarter of Āl ʿImrān every week, and four quarters of Al-Baqarah and Āl ʿImrān kept strong. Three one-hour mornings, three light days, and Sunday for tasmeeʿ.',
+    lede: 'One new quarter of the Qur’an every week, from any sūrah, and four older quarters kept strong. Three morning sessions, three light days, and Sunday for tasmeeʿ.',
     langBtn: 'عربي',
     howTitle: 'How this plan works',
     how: [
@@ -530,7 +556,12 @@ const T = {
     imran: 'Āl ʿImrān', fromAyah: 'from ayah', toAyah: 'to ayah',
     confirm: 'Start this week', later: 'Not now',
     startAt: 'Session starts', busyOff: 'Busy day? 15-minute version', busyOn: 'Busy-day version on',
-    metaSession: (a,b) => `1-hour session · ${a}–${b}`,
+    metaSession: (a,b,l) => `${l} session · ${a}–${b}`,
+    lenLbl: 'Length', lenOpt: { 60: '1 hour', 90: '1½ hours', 120: '2 hours' }, lenWord: { 60: '1-hour', 90: '1½-hour', 120: '2-hour' },
+    mins: (n) => `${n} min`,
+    pickQ: 'Choose a quarter…', juz: (n) => `Juz ${n}`, hizbQ: (h, q) => `Ḥizb ${h} · quarter ${q}`,
+    customRange: 'or choose the ayat yourself', fromW: 'From', toW: 'to', autoAt: (x) => `Auto (${x})`,
+    contQ: (r) => `Continue: ${r}`,
     metaBusy: (a,b) => `Busy-day version · ${a}–${b}`,
     metaLight: 'Light day · 15–20 minutes, or just listening',
     metaSun: 'Tasmeeʿ day · 12:00 pm – 6:00 pm',
@@ -544,7 +575,7 @@ const T = {
     quarters: 'Your quarters',
     newQ: 'New this week', newQwhen: 'one third Mon, Tue, Wed', newQwhenHeavy: 'over two weeks',
     sizeLabel: 'Quarter size', sizeNormal: 'Normal · 1 week', sizeHeavy: 'Long / heavy · 2 weeks',
-    week1: 'Week 1 · first half', week2: 'Week 2 · second half', h1ends: 'First half ends at ayah',
+    week1: 'Week 1 · first half', week2: 'Week 2 · second half', h1ends: 'First half ends at',
     heavyNote: 'The quarter is spread over two weeks, so each day stays the same size. Week 1 memorizes the first half. Week 2 memorizes the second half, and that Sunday’s tasmeeʿ is the whole quarter.',
     heavyHint: (n) => `This quarter has only ${n} verses, so its verses are long. If it feels heavy, choose “Long / heavy” to spread it over two weeks.`,
     heavyTag: (w) => `Long quarter · week ${w} of 2`,
@@ -553,9 +584,9 @@ const T = {
     gNewH: (w) => ['Portion 1', 'Portion 2, then 1 + 2 together', w === 1 ? 'Portion 3, then the whole half' : 'Portion 3, then the whole quarter', 'Light or listen', 'Light or listen', w === 1 ? 'Whole half ×2' : 'Whole quarter ×2', w === 1 ? '3 clean · tasmeeʿ of the half' : '3 clean · tasmeeʿ of the quarter'],
     bannerHalf: (r) => `A new week: time for the second half of this long quarter (${r}).`,
     startHalf2: 'Start the second half', repeatHalf1: 'Repeat the first half',
-    p1endsH: 'Monday’s portion ends at ayah', p2endsH: 'Tuesday’s portion ends at ayah',
+    p1endsH: 'Monday’s portion ends at', p2endsH: 'Tuesday’s portion ends at',
     splitHintH: 'This week’s half is split into three daily portions. If a portion ends in the middle of a meaning, move it to the nearest natural stop.',
-    p1ends: 'First third ends at ayah', p2ends: 'Second third ends at ayah',
+    p1ends: 'First third ends at', p2ends: 'Second third ends at',
     splitHint: 'The page splits the quarter into three roughly equal thirds. If a third ends in the middle of a meaning, move it to the nearest natural stop.',
     recentQ: 'Recent', recentWhen: 'in each recap',
     recentHint: 'Last week’s quarter. It gets a quick recitation every session for one week, until it settles.',
@@ -584,7 +615,7 @@ const T = {
     gRecent: ['10 min', '10 min', '10 min', '—', '—', 'Once', 'Fix mistakes'],
     gAll: 'All 4',
     gListen: (q1, q4) => ['—', '—', '—', `New ×3 · ${q4}`, `New ×2 · ${q1}`, `or new ×3 · ${q4}`, '—'],
-    bannerText: (r) => `A new week has started. Last week’s quarter (${r}) moves to Recent. Which ayat are you memorizing this week?`,
+    bannerText: (r) => `A new week has started. Last week’s quarter (${r}) moves to Recent. Which quarter are you memorizing this week?`,
     foot: 'Progress is saved in this browser on this device. A quarter is about 2½ mushaf pages; if one feels too heavy, give it two weeks.',
     b: {
       new: [
@@ -598,6 +629,7 @@ const T = {
         ['Memorize Wednesday’s portion', (w) => (w === 1 ? 'The same way. Then recite this week’s whole half from beginning to end, twice, without looking.' : 'The same way. Then recite the whole quarter, both halves, from beginning to end, twice, without looking.')],
       ],
       sunNewHalf: ['This week’s half · 3 clean in a row', 'Recite it until you get three complete recitations in a row with no mistake. A mistake starts the count again.'],
+      midBreak: ['Short break', 'Stand up, drink some water, and step away from the mushaf for a few minutes.'],
       review: ['Review one old quarter', 'Only this one quarter today. Recite it from memory first, then check with the mushaf. Mark each mistake lightly in pencil and repeat that spot 3 times.'],
       recap: ['Short recap', 'Last week’s quarter once from memory, then today’s third once more. And today’s third once more before sleep.'],
       recapNoRecent: ['Short recap', 'Today’s third once more from memory. And once more before sleep.'],
@@ -624,7 +656,7 @@ const T = {
   },
   ar: {
     title: 'ربعًا ربعًا',
-    lede: 'ربع جديد من آل عمران كل أسبوع، مع تثبيت أربعة أرباع من البقرة وآل عمران: ثلاث جلسات صباحية مدة كل منها ساعة، وثلاثة أيام خفيفة، والأحد للتسميع.',
+    lede: 'ربع جديد من القرآن كل أسبوع، من أي سورة، مع تثبيت أربعة أرباع سابقة: ثلاث جلسات صباحية، وثلاثة أيام خفيفة، والأحد للتسميع.',
     langBtn: 'English',
     howTitle: 'كيف يعمل الجدول',
     how: [
@@ -639,7 +671,12 @@ const T = {
     imran: 'آل عمران', fromAyah: 'من الآية', toAyah: 'إلى الآية',
     confirm: 'ابدأ هذا الأسبوع', later: 'ليس الآن',
     startAt: 'بداية الجلسة', busyOff: 'يوم مزدحم؟ نسخة الربع ساعة', busyOn: 'نسخة اليوم المزدحم مفعّلة',
-    metaSession: (a,b) => `جلسة ساعة — ${a} – ${b}`,
+    metaSession: (a,b,l) => `جلسة ${l} — ${a} – ${b}`,
+    lenLbl: 'المدة', lenOpt: { 60: 'ساعة', 90: 'ساعة ونصف', 120: 'ساعتان' }, lenWord: { 60: 'ساعة', 90: 'ساعة ونصف', 120: 'ساعتين' },
+    mins: (n, raw) => `${n} ${raw >= 3 && raw <= 10 ? 'دقائق' : 'دقيقة'}`,
+    pickQ: 'اختر ربعًا…', juz: (n) => `الجزء ${n}`, hizbQ: (h, q) => `الحزب ${h} — ${['الربع الأول', 'الربع الثاني', 'الربع الثالث', 'الربع الرابع'][q - 1]}`,
+    customRange: 'أو حدِّد الآيات بنفسك', fromW: 'من', toW: 'إلى', autoAt: (x) => `تلقائي (${x})`,
+    contQ: (r) => `متابعة: ${r}`,
     metaBusy: (a,b) => `نسخة اليوم المزدحم — ${a} – ${b}`,
     metaLight: 'يوم خفيف — ربع ساعة تقريبًا، أو استماع فقط',
     metaSun: 'يوم التسميع — ١٢:٠٠ ظهرًا – ٦:٠٠ مساءً',
@@ -653,7 +690,7 @@ const T = {
     quarters: 'الأرباع',
     newQ: 'الجديد هذا الأسبوع', newQwhen: 'ثلث كل يوم: اثنين، ثلاثاء، أربعاء', newQwhenHeavy: 'على أسبوعين',
     sizeLabel: 'حجم الربع', sizeNormal: 'عادي — أسبوع', sizeHeavy: 'طويل أو ثقيل — أسبوعان',
-    week1: 'الأسبوع ١ — النصف الأول', week2: 'الأسبوع ٢ — النصف الثاني', h1ends: 'نهاية النصف الأول: آية',
+    week1: 'الأسبوع ١ — النصف الأول', week2: 'الأسبوع ٢ — النصف الثاني', h1ends: 'نهاية النصف الأول عند',
     heavyNote: 'يتوزع الربع على أسبوعين فيبقى ورد كل يوم بنفس الحجم: الأسبوع الأول للنصف الأول، والثاني للنصف الثاني، وتسميع أحده للربع كاملًا.',
     heavyHint: (n) => `هذا الربع ${n} آيات فقط، أي أن آياته طويلة. إن ثقل، اختر «طويل أو ثقيل» ليتوزع على أسبوعين.`,
     heavyTag: (w) => `ربع طويل — الأسبوع ${w === 1 ? '١' : '٢'} من ٢`,
@@ -662,9 +699,9 @@ const T = {
     gNewH: (w) => ['الورد ١', 'الورد ٢، ثم ١ و٢ معًا', w === 1 ? 'الورد ٣، ثم النصف كاملًا' : 'الورد ٣، ثم الربع كاملًا', 'خفيف أو استماع', 'خفيف أو استماع', w === 1 ? 'النصف كاملًا مرتين' : 'الربع كاملًا مرتين', w === 1 ? '٣ صحيحة — تسميع النصف' : '٣ صحيحة — تسميع الربع'],
     bannerHalf: (r) => `أسبوع جديد: حان وقت النصف الثاني من هذا الربع الطويل (${r}).`,
     startHalf2: 'ابدأ النصف الثاني', repeatHalf1: 'إعادة النصف الأول',
-    p1endsH: 'نهاية ورد الاثنين: آية', p2endsH: 'نهاية ورد الثلاثاء: آية',
+    p1endsH: 'نهاية ورد الاثنين عند', p2endsH: 'نهاية ورد الثلاثاء عند',
     splitHintH: 'نصف هذا الأسبوع مقسَّم إلى ثلاثة أوراد يومية. وإن انتهى ورد في وسط معنى، يُنقل إلى أقرب وقف.',
-    p1ends: 'نهاية الثلث الأول: آية', p2ends: 'نهاية الثلث الثاني: آية',
+    p1ends: 'نهاية الثلث الأول عند', p2ends: 'نهاية الثلث الثاني عند',
     splitHint: 'الصفحة تقسم الربع إلى ثلاثة أثلاث متقاربة. وإن انتهى ثلث في وسط معنى، يُنقل إلى أقرب وقف.',
     recentQ: 'القريب', recentWhen: 'في ختام كل جلسة',
     recentHint: 'ربع الأسبوع الماضي. يُسمَّع مرة في كل جلسة لمدة أسبوع حتى يثبت.',
@@ -693,7 +730,7 @@ const T = {
     gRecent: ['١٠ دقائق', '١٠ دقائق', '١٠ دقائق', '—', '—', 'مرة', 'إصلاح الأخطاء'],
     gAll: 'الأربعة',
     gListen: (q1, q4) => ['—', '—', '—', `الجديد ×٣ — ${q4}`, `الجديد ×٢ — ${q1}`, `أو الجديد ×٣ — ${q4}`, '—'],
-    bannerText: (r) => `بدأ أسبوع جديد. ربع الأسبوع الماضي (${r}) ينتقل إلى القريب. ما آيات هذا الأسبوع؟`,
+    bannerText: (r) => `بدأ أسبوع جديد. ربع الأسبوع الماضي (${r}) ينتقل إلى القريب. ما ربع هذا الأسبوع؟`,
     foot: 'يُحفظ التقدم في هذا المتصفح على هذا الجهاز. الربع نحو صفحتين ونصف من المصحف؛ وإن ثقل ربعٌ فلا بأس بأسبوعين.',
     b: {
       new: [
@@ -707,6 +744,7 @@ const T = {
         ['حفظ ورد الأربعاء', (w) => (w === 1 ? 'بنفس الطريقة، ثم تسميع نصف هذا الأسبوع كاملًا من أوله لآخره مرتين دون نظر.' : 'بنفس الطريقة، ثم تسميع الربع كاملًا بنصفيه من أوله لآخره مرتين دون نظر.')],
       ],
       sunNewHalf: ['نصف هذا الأسبوع — ثلاث تسميعات صحيحة متتالية', 'التسميع حتى ثلاث مرات كاملة بلا خطأ على التوالي؛ وأي خطأ يعيد العدّ.'],
+      midBreak: ['استراحة قصيرة', 'قيام وشرب ماء، وابتعاد عن المصحف دقائق قليلة.'],
       review: ['مراجعة ربع واحد قديم', 'هذا الربع فقط اليوم. تسميعه غيبًا أولًا ثم المقارنة بالمصحف، مع علامة خفيفة بالقلم الرصاص عند كل خطأ وتكرار موضعه ٣ مرات.'],
       recap: ['ختام قصير', 'ربع الأسبوع الماضي مرة غيبًا، ثم ثلث اليوم مرة أخرى. وثلث اليوم مرة قبل النوم.'],
       recapNoRecent: ['ختام قصير', 'ثلث اليوم مرة أخرى غيبًا، ومرة قبل النوم.'],
@@ -733,13 +771,42 @@ const T = {
   },
 };
 
+// ---------------------------------------------------------------- the Qur'an
+// Qur'an data (Ḥafṣ, Madinah muṣḥaf): ayah count per sūrah, sūrah names, and where each of the 240 quarters (rubʿ al-ḥizb) starts,
+// as a running ayah number 1–6236 across the whole muṣḥaf. Source: quran-meta (MIT).
+const SURAH_AYAT = [7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6];
+const SURAH_EN = ["Al-Fātiḥah","Al-Baqarah","Āl ʿImrān","An-Nisāʾ","Al-Māʾidah","Al-Anʿām","Al-Aʿrāf","Al-Anfāl","At-Tawbah","Yūnus","Hūd","Yūsuf","Ar-Raʿd","Ibrāhīm","Al-Ḥijr","An-Naḥl","Al-Isrāʾ","Al-Kahf","Maryam","Ṭā Hā","Al-Anbiyāʾ","Al-Ḥajj","Al-Muʾminūn","An-Nūr","Al-Furqān","Ash-Shuʿarāʾ","An-Naml","Al-Qaṣaṣ","Al-ʿAnkabūt","Ar-Rūm","Luqmān","As-Sajdah","Al-Aḥzāb","Sabaʾ","Fāṭir","Yā Sīn","Aṣ-Ṣāffāt","Ṣād","Az-Zumar","Ghāfir","Fuṣṣilat","Ash-Shūrā","Az-Zukhruf","Ad-Dukhān","Al-Jāthiyah","Al-Aḥqāf","Muḥammad","Al-Fatḥ","Al-Ḥujurāt","Qāf","Adh-Dhāriyāt","Aṭ-Ṭūr","An-Najm","Al-Qamar","Ar-Raḥmān","Al-Wāqiʿah","Al-Ḥadīd","Al-Mujādilah","Al-Ḥashr","Al-Mumtaḥanah","Aṣ-Ṣaff","Al-Jumuʿah","Al-Munāfiqūn","At-Taghābun","Aṭ-Ṭalāq","At-Taḥrīm","Al-Mulk","Al-Qalam","Al-Ḥāqqah","Al-Maʿārij","Nūḥ","Al-Jinn","Al-Muzzammil","Al-Muddaththir","Al-Qiyāmah","Al-Insān","Al-Mursalāt","An-Nabaʾ","An-Nāziʿāt","ʿAbasa","At-Takwīr","Al-Infiṭār","Al-Muṭaffifīn","Al-Inshiqāq","Al-Burūj","Aṭ-Ṭāriq","Al-Aʿlā","Al-Ghāshiyah","Al-Fajr","Al-Balad","Ash-Shams","Al-Layl","Aḍ-Ḍuḥā","Ash-Sharḥ","At-Tīn","Al-ʿAlaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-ʿĀdiyāt","Al-Qāriʿah","At-Takāthur","Al-ʿAṣr","Al-Humazah","Al-Fīl","Quraysh","Al-Māʿūn","Al-Kawthar","Al-Kāfirūn","An-Naṣr","Al-Masad","Al-Ikhlāṣ","Al-Falaq","An-Nās"];
+const SURAH_AR = ["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الإنسان","المرسلات","النبأ","النازعات","عبس","التكوير","الانفطار","المطففين","الانشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
+const RUB_START = [1,33,51,67,82,99,113,131,149,165,184,196,210,226,240,250,260,270,279,290,308,326,345,368,386,406,426,446,464,479,494,505,517,529,551,567,581,593,607,628,641,656,670,681,696,710,720,736,751,766,778,802,825,848,863,884,900,916,930,940,955,985,1001,1019,1042,1071,1096,1110,1125,1143,1161,1182,1201,1221,1236,1254,1269,1281,1295,1310,1328,1346,1357,1375,1390,1417,1435,1454,1479,1497,1514,1534,1557,1581,1603,1626,1649,1673,1697,1712,1726,1742,1760,1778,1803,1852,1902,1931,1952,1976,1991,2012,2030,2052,2079,2099,2128,2157,2172,2191,2215,2239,2272,2309,2349,2403,2431,2459,2484,2512,2534,2566,2596,2614,2633,2655,2674,2709,2748,2792,2812,2826,2844,2856,2876,2908,2933,2984,3043,3113,3160,3186,3215,3241,3264,3281,3303,3328,3341,3366,3386,3410,3440,3463,3491,3514,3534,3551,3564,3584,3593,3616,3630,3652,3675,3701,3733,3765,3810,3871,3933,3991,4022,4066,4090,4111,4134,4154,4174,4199,4227,4243,4265,4285,4299,4323,4349,4382,4431,4485,4511,4531,4555,4578,4601,4613,4626,4657,4706,4759,4810,4855,4902,4980,5054,5091,5105,5118,5137,5157,5178,5192,5218,5230,5242,5272,5324,5394,5448,5495,5552,5610,5673,5759,5830,5885,5949,6024,6091,6155,6237];
+// Positions are running ayah numbers (1 = Al-Fātiḥah 1, 6236 = An-Nās 6), so a range can cross sūrahs.
+const TOTAL = 6236;
+const SURAH_START = [];
+{ let g = 1; for (const c of SURAH_AYAT) { SURAH_START.push(g); g += c; } }
+const gOf = (s, a) => SURAH_START[s - 1] + a - 1;
+const lastLE = (arr, g, hi) => { let lo = 0; while (lo < hi) { const m = (lo + hi + 1) >> 1; if (arr[m] <= g) lo = m; else hi = m - 1; } return lo; };
+const sa = (g) => { const i = lastLE(SURAH_START, g, 113); return [i + 1, g - SURAH_START[i] + 1]; }; // → [sūrah, ayah]
+const rubRange = (k) => [RUB_START[k], RUB_START[k + 1] - 1];                                     // k = 0…239
+const rubOf = (g) => lastLE(RUB_START, g, 239);
+const rubExact = (r) => { if (!r) return -1; const k = rubOf(r[0]), x = rubRange(k); return x[0] === r[0] && x[1] === r[1] ? k : -1; };
+
+// Old saves stored ayah numbers of Āl ʿImrān only; turn them into running positions once.
+function migrate(st) {
+  if (st.qv === 2) return;
+  const g3 = (v) => { const n = parseInt(v, 10); return Number.isInteger(n) && n >= 1 && n <= 200 ? String(gOf(3, n)) : ''; };
+  if (st.range) for (const k of ['from', 'to', 's1', 's2', 'h1']) if (st.range[k]) st.range[k] = g3(st.range[k]);
+  if (st.recent) for (const k of ['from', 'to']) if (st.recent[k]) st.recent[k] = g3(st.recent[k]);
+  if (Array.isArray(st.history)) for (const h of st.history) if (Array.isArray(h.range)) h.range = h.range.map((n) => gOf(3, n));
+  st.qv = 2;
+}
+
 // ---------------------------------------------------------------- state
-const defaults = { name: '', history: [], partPick: {}, size: 'normal', hw: 1, winW: {}, wins: [], reward: {}, lang: 'en', start: 630, range: { from: '', to: '', s1: '', s2: '' }, recent: { from: '', to: '' }, reviews: ['', '', '', ''], weekKey: null, busy: {}, progress: {} };
+const defaults = { name: '', history: [], partPick: {}, size: 'normal', hw: 1, winW: {}, wins: [], reward: {}, lang: 'en', start: 630, range: { from: '', to: '', s1: '', s2: '' }, recent: { from: '', to: '' }, reviews: ['', '', '', ''], weekKey: null, busy: {}, progress: {}, len: 90 };
 function load() {
   try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && typeof s === 'object') return { ...defaults, ...s }; } catch (e) { /* storage unavailable */ }
   return { ...defaults };
 }
 const S = load();
+migrate(S);
 // save(): every real change stamps _t; save(false) only writes locally (startup housekeeping, applying cloud data)
 const save = (bump = true) => {
   if (bump === true) S._t = Date.now();
@@ -752,7 +819,7 @@ window.QBQ = {
   apply(obj) {
     for (const k of Object.keys(S)) delete S[k];
     Object.assign(S, JSON.parse(JSON.stringify(defaults)), obj);
-    archiveOldWeeks(); save(false); renderStatic(); renderDynamic();
+    migrate(S); archiveOldWeeks(); save(false); renderStatic(); renderDynamic();
   },
   onSave: null,
 };
@@ -778,7 +845,7 @@ function clock(m) {
 // compact form for the agenda column: the day header already says morning or afternoon
 function clockS(m) { const h = Math.floor(m / 60); return `${num(h % 12 || 12)}:${num2(m % 60)}`; }
 
-const valid = (f, t) => Number.isInteger(f) && Number.isInteger(t) && f >= 1 && t >= f && t <= 200;
+const valid = (f, t) => Number.isInteger(f) && Number.isInteger(t) && f >= 1 && t >= f && t <= TOTAL;
 function quarter() { const f = parseInt(S.range.from, 10), t = parseInt(S.range.to, 10); return valid(f, t) ? [f, t] : null; }
 function recentQ() { const f = parseInt(S.recent.from, 10), t = parseInt(S.recent.to, 10); return valid(f, t) ? [f, t] : null; }
 function autoSplits(f, t) {
@@ -813,8 +880,32 @@ function parts() {
   return [[f, a], [a + 1, b], [b + 1, t]];
 }
 const SEP = () => (S.lang === 'ar' ? ' — ' : ' · '); // a middle dot beside Arabic digits reads like ٠
-const span = (r) => (r[0] === r[1] ? num(r[0]) : `${num(r[0])}–${num(r[1])}`);
-const rng = (r) => `${L().imran} ${span(r)}`;
+const sName = (n) => (S.lang === 'ar' ? SURAH_AR : SURAH_EN)[n - 1];
+function rng(r) {
+  const [s1, a1] = sa(r[0]), [s2, a2] = sa(r[1]);
+  if (s1 !== s2) return `${sName(s1)} ${num(a1)} – ${sName(s2)} ${num(a2)}`;
+  return `${sName(s1)} ${a1 === a2 ? num(a1) : `${num(a1)}–${num(a2)}`}`;
+}
+// inside this week's quarter: plain ayah numbers, unless the quarter crosses sūrahs
+const multi = () => { const q = quarter(); return !!q && sa(q[0])[0] !== sa(q[1])[0]; };
+const ayahLbl = (g) => { const [n, a] = sa(g); return multi() ? `${sName(n)} ${num(a)}` : num(a); };
+const span = (r) => (multi() ? rng(r) : r[0] === r[1] ? ayahLbl(r[0]) : `${ayahLbl(r[0])}–${ayahLbl(r[1])}`);
+const rubLabel = (k) => `${L().hizbQ(num(Math.floor(k / 4) + 1), (k % 4) + 1)}${S.lang === 'ar' ? ': ' : ' — '}${rng(rubRange(k))}`;
+function rubOptions(selK, placeholder = true) {
+  const t = L();
+  let h = placeholder ? `<option value="">${esc(t.pickQ)}</option>` : '';
+  for (let j = 0; j < 30; j++) {
+    h += `<optgroup label="${esc(t.juz(num(j + 1)))}">`;
+    for (let k = j * 8; k < j * 8 + 8; k++) h += `<option value="${k}"${k === selK ? ' selected' : ''}>${esc(rubLabel(k))}</option>`;
+    h += '</optgroup>';
+  }
+  return h;
+}
+const surahOptions = (selS) => SURAH_AYAT.map((_, i) => `<option value="${i + 1}"${i + 1 === selS ? ' selected' : ''}>${num(i + 1)}. ${esc(sName(i + 1))}</option>`).join('');
+// session length: minutes for [new, short break, review, recap]
+const SESS = { 60: [30, 0, 20, 10], 90: [40, 10, 25, 15], 120: [50, 15, 35, 20] };
+const sessLen = () => (SESS[S.len] ? S.len : 90);
+const minsTxt = (n) => L().mins(num(n), n);
 const revName = (i) => (S.reviews[i] || '').trim() || L().reviewDefault[i];
 
 // ---------------------------------------------------------------- the plan
@@ -848,10 +939,12 @@ function blocks(d) {
       mk('busyNew', 'new', B.busyNew, { min: 10, sub: partTxt(pickedPart(d)) }),
       mk('busyListen', 'listen', B.busyListen, { min: 5, arg: revName(ri) }),
     ];
+    const [mNew, mBreak, mRev, mRecap] = SESS[sessLen()];
     return [
-      mk('new', 'new', heavy() ? B.newH[pickedPart(d)] : B.new[pickedPart(d)], { min: 30, sub: partTxt(pickedPart(d)), arg: hw() }),
-      mk('review', 'review', B.review, { min: 20, sub: revName(ri) }),
-      rq ? mk('close', 'close', B.recap, { min: 10, sub: rng(rq) }) : mk('close', 'close', B.recapNoRecent, { min: 10 }),
+      mk('new', 'new', heavy() ? B.newH[pickedPart(d)] : B.new[pickedPart(d)], { min: mNew, sub: partTxt(pickedPart(d)), arg: hw() }),
+      ...(mBreak ? [mk('break', 'rest', B.midBreak, { min: mBreak, optional: true })] : []),
+      mk('review', 'review', B.review, { min: mRev, sub: revName(ri) }),
+      rq ? mk('close', 'close', B.recap, { min: mRecap, sub: rng(rq) }) : mk('close', 'close', B.recapNoRecent, { min: mRecap }),
     ];
   }
   const ci = d >= 3 && d <= 5 ? catchPart(d) : undefined;
@@ -901,7 +994,7 @@ const QUOTES = [
   { k: 'q', tags: ['new', 'sun'], ar: 'وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا',
     en: 'And recite the Quran slowly and distinctly.', src: ['Al-Muzzammil 73:4', 'سورة المزمل: ٤'] },
   { k: 'q', tags: ['any'], ar: 'رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِن لَّدُنكَ رَحْمَةً ۚ إِنَّكَ أَنتَ الْوَهَّابُ',
-    en: 'Our Lord, do not let our hearts swerve after You have guided us, and grant us mercy from Yourself. You are the Giver. (A duʿāʾ from the sūrah you are memorizing.)', src: ['Āl ʿImrān 3:8', 'سورة آل عمران: ٨'] },
+    en: 'Our Lord, do not let our hearts swerve after You have guided us, and grant us mercy from Yourself. You are the Giver.', src: ['Āl ʿImrān 3:8', 'سورة آل عمران: ٨'] },
   { k: 'h', tags: ['any'], ar: 'خيرُكم مَن تعلَّم القرآنَ وعلَّمه',
     en: 'The best of you are those who learn the Quran and teach it.', src: ['Al-Bukhārī', 'رواه البخاري'] },
   { k: 'h', tags: ['any', 'sun'], ar: 'اقرؤوا القرآنَ، فإنه يأتي يومَ القيامة شفيعًا لأصحابه',
@@ -1055,7 +1148,7 @@ const X_TXT = {
     pick: 'Listen with him', picked: 'Your listening reciter',
     tags: { mem: 'Best for memorizing', listen: 'For listening', tajwid: 'Tajwīd model', heart: 'Moves the heart' },
     links: 'Listen online on Quran.com, where you can choose any of these reciters:',
-    linkB: 'Al-Baqarah', linkI: 'Āl ʿImrān',
+    linkQ: 'This week’s quarter',
     teacherLbl: 'Your tasmeeʿ teacher', teacherPh: 'Name (optional)',
     teacherNote: 'Teaching the Quran is a continuing charity for your teacher. A short duʿāʾ for them is added after every Sunday tasmeeʿ.',
     withReciter: (n) => `with ${n}`,
@@ -1064,7 +1157,6 @@ const X_TXT = {
     diaryTitle: 'Verses that touched my heart',
     diaryLede: 'When an ayah moves you while memorizing or reviewing, save it here with a few words about why.',
     diaryCount: (n) => (n === 1 ? '1 verse' : `${n} verses`),
-    surahs: { 3: 'Āl ʿImrān', 2: 'Al-Baqarah', 0: 'Another sūrah' },
     otherPh: 'Sūrah name', ayahLbl: 'Ayah', notePh: 'What did this ayah say to you?',
     save: 'Save to diary', saved: 'Saved',
     empty: 'No verses yet. The first one you save will appear here.',
@@ -1087,7 +1179,7 @@ const X_TXT = {
     pick: 'الاستماع له', picked: 'قارئ أيام الاستماع',
     tags: { mem: 'للحفظ', listen: 'للاستماع', tajwid: 'قدوة في التجويد', heart: 'يحرّك القلب' },
     links: 'للاستماع على Quran.com مع اختيار أي قارئ من هؤلاء:',
-    linkB: 'سورة البقرة', linkI: 'سورة آل عمران',
+    linkQ: 'ربع هذا الأسبوع',
     teacherLbl: 'معلّم التسميع', teacherPh: 'الاسم (اختياري)',
     teacherNote: 'تعليم القرآن صدقة جارية للمعلّم، ويُضاف دعاء قصير له بعد تسميع كل أحد.',
     withReciter: (n) => `بصوت ${n}`,
@@ -1096,7 +1188,6 @@ const X_TXT = {
     diaryTitle: 'آيات لمست القلب',
     diaryLede: 'حين تؤثّر آية أثناء الحفظ أو المراجعة، تُحفظ هنا مع كلمات قليلة عن سبب أثرها.',
     diaryCount: (n) => `${n} ${n === 1 ? 'آية' : n === 2 ? 'آيتان' : n <= 10 ? 'آيات' : 'آية'}`,
-    surahs: { 3: 'آل عمران', 2: 'البقرة', 0: 'سورة أخرى' },
     otherPh: 'اسم السورة', ayahLbl: 'الآية', notePh: 'ماذا قالت هذه الآية للقلب؟',
     save: 'حفظ في الدفتر', saved: 'تم الحفظ',
     empty: 'لا آيات بعد. أول آية تُحفظ ستظهر هنا.',
@@ -1167,7 +1258,14 @@ function renderSheikhs() {
       <p class="sh-why">${esc(s.why[ar ? 1 : 0])}</p>
       <div class="sh-tags">${s.tags.map((t) => `<span class="sh-tag">${esc(x.tags[t])}</span>`).join('')}</div></li>`;
   }).join('');
-  $('#shLinks').innerHTML = `${esc(x.links)} <a href="https://quran.com/2" target="_blank" rel="noopener">${esc(x.linkB)}</a>${SEP()}<a href="https://quran.com/3" target="_blank" rel="noopener">${esc(x.linkI)}</a>`;
+  const q = quarter();
+  let link = '<a href="https://quran.com" target="_blank" rel="noopener">Quran.com</a>';
+  if (q) {
+    const [s1, a1] = sa(q[0]), [s2, a2] = sa(q[1]);
+    const href = `https://quran.com/${s1}/${s1 === s2 ? `${a1}-${a2}` : a1}`;
+    link = `<a href="${href}" target="_blank" rel="noopener">${esc(x.linkQ)}${SEP()}${esc(rng(q))}</a>`;
+  }
+  $('#shLinks').innerHTML = `${esc(x.links)} ${link}`;
   $('#teacherLbl').textContent = x.teacherLbl;
   const tin = $('#teacher');
   tin.placeholder = x.teacherPh;
@@ -1181,19 +1279,17 @@ function renderDiary() {
   $('#diaryTitle').textContent = x.diaryTitle;
   $('#diaryLede').textContent = x.diaryLede;
   $('#diaryCount').textContent = list.length ? x.diaryCount(num(list.length)) : '';
-  const sel = $('#dSurah'), cur = sel.value || '3';
-  sel.innerHTML = ['3', '2', '0'].map((k) => `<option value="${k}">${esc(x.surahs[k])}</option>`).join('');
-  sel.value = cur;
-  $('#dOther').hidden = sel.value !== '0';
-  $('#dOther').placeholder = x.otherPh;
+  const sel = $('#dSurah'), q = quarter(), cur = +sel.value || (q ? sa(q[0])[0] : 1);
+  sel.innerHTML = surahOptions(cur);
+  $('#dOther').hidden = true;
   $('#dAyahLbl').textContent = x.ayahLbl;
-  $('#dAyah').max = sel.value === '2' ? 286 : sel.value === '3' ? 200 : 286;
+  $('#dAyah').max = SURAH_AYAT[cur - 1];
   $('#dNote').placeholder = x.notePh;
   if (!$('#dSave').dataset.flash) $('#dSave').textContent = x.save;
   const fmtD = (iso) => { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString(S.lang === 'ar' ? 'ar-EG' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); };
   $('#diaryList').innerHTML = list.length
     ? list.map((e) => {
-      const sname = e.surah === '0' ? e.other || x.surahs[0] : x.surahs[e.surah];
+      const sname = e.surah === '0' || !SURAH_AYAT[+e.surah - 1] ? e.other || '—' : sName(+e.surah);
       return `<li class="entry"><div class="entry-top"><strong>${esc(sname)}${SEP()}${num(e.ayah)}</strong><span>${esc(fmtD(e.date))}</span></div>
         ${e.note ? `<p class="entry-note">${esc(e.note)}</p>` : ''}
         <button type="button" class="entry-del" data-id="${e.id}">${esc(diaryArmed === e.id ? x.delSure : x.del)}</button></li>`;
@@ -1225,7 +1321,7 @@ function setupExtras() {
   $('#diaryForm').addEventListener('submit', (e) => {
     e.preventDefault();
     const surah = $('#dSurah').value, ayah = parseInt($('#dAyah').value, 10);
-    const max = surah === '3' ? 200 : 286;
+    const max = SURAH_AYAT[+surah - 1] || 286;
     if (!Number.isInteger(ayah) || ayah < 1 || ayah > max) { $('#dAyah').focus(); return; }
     const entry = { id: Date.now().toString(36), date: isoDate(new Date()), surah, other: $('#dOther').value.trim(), ayah, note: $('#dNote').value.trim() };
     S.diary = [entry, ...(S.diary || [])];
@@ -1404,7 +1500,7 @@ async function drawWeekCard(sn) {
   c.width = W; c.height = H;
   const g = c.getContext('2d'), ar = S.lang === 'ar', K = KX(), t = L();
   const sans = (w, s) => `${w} ${s}px "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif`;
-  const disp = (s) => (ar ? `700 ${s}px Amiri, "Traditional Arabic", serif` : `italic 500 ${s}px Newsreader, Georgia, serif`);
+  const disp = (s) => (ar ? `700 ${s}px "Amiri QBQ", Amiri, "Traditional Arabic", serif` : `italic 500 ${s}px Newsreader, Georgia, serif`);
   g.direction = ar ? 'rtl' : 'ltr';
   const X = (x) => (ar ? W - x : x);
   const side = (s) => (ar ? (s === 'left' ? 'right' : s === 'right' ? 'left' : s) : s);
@@ -1475,7 +1571,7 @@ async function drawWeekCard(sn) {
 
   // quote
   g.textAlign = 'center';
-  g.fillStyle = CARD.ink; g.font = `400 46px Amiri, "Traditional Arabic", serif`; g.direction = 'rtl';
+  g.fillStyle = CARD.ink; g.font = `400 46px "Amiri QBQ", Amiri, "Traditional Arabic", serif`; g.direction = 'rtl';
   g.fillText('«أحبُّ الأعمال إلى الله أدومُها وإن قلَّ»', W / 2, 1118);
   g.direction = ar ? 'rtl' : 'ltr';
   if (!ar) { g.fillStyle = CARD.muted; g.font = `italic 400 25px Newsreader, Georgia, serif`; g.fillText(K.cardQuote, W / 2, 1162); }
@@ -1603,6 +1699,7 @@ function setupKeep() {
     if (!pending) return;
     for (const k of Object.keys(S)) delete S[k];
     Object.assign(S, JSON.parse(JSON.stringify(defaults)), pending);
+    migrate(S);
     pending = null; $('#restoreConfirm').hidden = true;
     archiveOldWeeks(); save(); renderStatic(); renderDynamic();
     keepStatus(KX().restored);
@@ -1650,6 +1747,9 @@ function renderStatic() {
     o.value = m; o.textContent = clock(m); if (m === S.start) o.selected = true;
     sel.appendChild(o);
   }
+  $('#len').innerHTML = [60, 90, 120].map((m) => `<option value="${m}"${m === sessLen() ? ' selected' : ''}>${esc(t.lenOpt[m])}</option>`).join('');
+  // suggestions for the review names: every quarter of the Qur'an
+  $('#qList').innerHTML = RUB_START.slice(0, 240).map((_, k) => `<option value="${esc(rng(rubRange(k)))}" label="${esc(t.hizbQ(num(Math.floor(k / 4) + 1), (k % 4) + 1))}"></option>`).join('');
 
   // review inputs
   const revs = $('#revs');
@@ -1657,7 +1757,7 @@ function renderStatic() {
   [0, 1, 2, 3].forEach((i) => {
     const row = document.createElement('div');
     row.className = 'rev';
-    row.innerHTML = `<span class="n">${num(i + 1)}</span><input type="text" id="rev${i}" aria-label="${esc(t.reviewQ)} ${i + 1}"><span class="when">${esc(t.revWhen[i])}</span>`;
+    row.innerHTML = `<span class="n">${num(i + 1)}</span><input type="text" id="rev${i}" list="qList" autocomplete="off" aria-label="${esc(t.reviewQ)} ${i + 1}"><span class="when">${esc(t.revWhen[i])}</span>`;
     revs.appendChild(row);
     const inp = row.querySelector('input');
     inp.value = S.reviews[i] || '';
@@ -1671,9 +1771,7 @@ function renderStatic() {
   $('#rules').innerHTML = `<li><b>${esc(t.prioLabel)}</b><div class="prio">${pr}</div></li>` +
     t.rules.map(([a, b]) => `<li><b>${esc(a)}</b><span>${esc(b)}</span></li>`).join('');
 
-  ['from', 'to', 's1', 's2'].forEach((k) => { $('#' + k).value = S.range[k] || ''; });
-  $('#rFrom').value = S.recent.from || '';
-  $('#rTo').value = S.recent.to || '';
+  rangeUiFresh = true;
 }
 
 function renderStrip() {
@@ -1695,8 +1793,8 @@ function renderDay() {
   const isSession = SESSION_DAYS.includes(d);
   let meta;
   if (isSession) {
-    const len = isBusy(d) ? 15 : 60;
-    meta = (isBusy(d) ? t.metaBusy : t.metaSession)(clock(S.start), clock(S.start + len));
+    const len = isBusy(d) ? 15 : sessLen();
+    meta = (isBusy(d) ? t.metaBusy : t.metaSession)(clock(S.start), clock(S.start + len), t.lenWord[len]);
   } else meta = d === 6 ? t.metaSun : t.metaLight;
   $('#dayMeta').textContent = `${date.toLocaleDateString(S.lang === 'ar' ? 'ar-EG' : 'en-GB', { day: 'numeric', month: 'long' })}${SEP()}${meta}${heavy() ? `${SEP()}${t.heavyTag(hw())}` : ''}`;
   const [a, b] = tally(d);
@@ -1754,12 +1852,73 @@ function renderParts() {
   const nVerses = q ? q[1] - q[0] + 1 : 0;
   $('#heavyHint').hidden = heavy() || !q || nVerses > 12;
   if (q) $('#heavyHint').textContent = t.heavyHint(num(nVerses));
-  if (q && document.activeElement !== $('#h1')) { $('#h1').placeholder = num(halfEnd(q[0], q[1])); $('#h1').value = S.range.h1 || ''; }
+  if (q && q[1] - q[0] >= 5) splitSelect('h1', q[0] + 2, q[1] - 3, halfEnd(q[0], q[1]), S.range.h1);
   $('#splits').hidden = !q || !p;
   if (p) {
-    if (document.activeElement !== $('#s1')) $('#s1').placeholder = num(p[0][1]);
-    if (document.activeElement !== $('#s2')) $('#s2').placeholder = num(p[1][1]);
+    const [f, t] = active();
+    splitSelect('s1', f, t - 2, p[0][1], S.range.s1);
+    splitSelect('s2', f + 1, t - 1, p[1][1], S.range.s2);
   }
+  renderRangeUI('n');
+  renderRangeUI('r');
+}
+
+// a select of every ayah where a portion may end; the first option keeps the automatic split
+function splitSelect(id, lo, hi, auto, cur) {
+  const el = $('#' + id);
+  let h = `<option value="">${esc(L().autoAt(ayahLbl(auto)))}</option>`;
+  for (let g = lo; g <= hi; g++) h += `<option value="${g}"${String(g) === String(cur || '') ? ' selected' : ''}>${esc(ayahLbl(g))}</option>`;
+  el.innerHTML = h;
+}
+
+// ---- choosing a quarter: a list of all 240, or any range of ayat (it may cross sūrahs)
+let rangeUiFresh = true;
+const rangeOf = (p) => (p === 'n' ? quarter() : recentQ());
+function renderRangeUI(p) {
+  const r = rangeOf(p), k = rubExact(r);
+  const pick = $('#' + p + 'Pick');
+  if (rangeUiFresh || pick.dataset.k !== String(k)) { pick.innerHTML = rubOptions(k); pick.dataset.k = String(k); }
+  const other = p === 'n' ? recentQ() : quarter();
+  const [sf, af] = r ? sa(r[0]) : [other ? sa(other[0])[0] : 1, ''];
+  const [st, at] = r ? sa(r[1]) : [sf, ''];
+  const put = (id, html, val) => {
+    const el = $('#' + p + id);
+    if (document.activeElement === el) return;
+    if (html !== null && (rangeUiFresh || el.dataset.v !== String(val))) el.innerHTML = html;
+    el.dataset.v = String(val);
+    el.value = String(val);
+  };
+  put('Sf', surahOptions(sf), sf);
+  put('St', surahOptions(st), st);
+  put('Af', null, af);
+  put('At', null, at);
+  $('#' + p + 'Af').max = SURAH_AYAT[sf - 1];
+  $('#' + p + 'At').max = SURAH_AYAT[st - 1];
+  if (r && k === -1) $('#' + p + 'Custom').open = true;
+  if (p === 'r') rangeUiFresh = false;
+}
+function setRange(p, f, t) {
+  if (p === 'n') {
+    S.range = { from: String(f), to: String(t), s1: '', s2: '', h1: '' };
+    S.weekKey = WEEK;
+  } else S.recent = { from: String(f), to: String(t) };
+  save(); renderDynamic();
+}
+function customChanged(p, e) {
+  const v = (id) => $('#' + p + id);
+  let sf = +v('Sf').value, st = +v('St').value;
+  if (e && e.target === v('Sf') && st < sf) { st = sf; v('St').value = String(st); }
+  v('Af').max = SURAH_AYAT[sf - 1];
+  v('At').max = SURAH_AYAT[st - 1];
+  const af = parseInt(v('Af').value, 10), at = parseInt(v('At').value, 10);
+  const ok = (n, a) => Number.isInteger(a) && a >= 1 && a <= SURAH_AYAT[n - 1];
+  const good = ok(sf, af) && ok(st, at) && gOf(st, at) >= gOf(sf, af);
+  v('Af').setAttribute('aria-invalid', String(!!v('Af').value && !ok(sf, af)));
+  v('At').setAttribute('aria-invalid', String(!!v('At').value && (!ok(st, at) || (good === false && ok(sf, af)))));
+  if (!good) return;
+  const f = gOf(sf, af), t = gOf(st, at), cur = rangeOf(p);
+  if (cur && cur[0] === f && cur[1] === t) return;
+  setRange(p, f, t);
 }
 
 function renderGlance() {
@@ -1768,7 +1927,7 @@ function renderGlance() {
   const rows = [
     [t.rowNew, heavy() ? t.gNewH(hw()) : t.gNew],
     [t.rowReview, [R[0], R[1], R[2], '—', '—', '—', t.gAll]],
-    [t.rowRecent, t.gRecent],
+    [t.rowRecent, t.gRecent.map((x, d) => (d < 3 ? minsTxt(SESS[sessLen()][3]) : x))],
     [t.rowListen, t.gListen(R[0], R[3])],
   ];
   $('#glance').innerHTML = head + '<tbody>' + rows.map(([h, cells]) =>
@@ -1786,10 +1945,21 @@ function renderBanner() {
   $('#nbRepeat').hidden = !nextHalf;
   if (nextHalf) { $('#bannerText').textContent = L().bannerHalf(rng([halfEnd(q[0], q[1]) + 1, q[1]])); return; }
   $('#bannerText').textContent = L().bannerText(rng(q));
-  const len = q[1] - q[0] + 1;
-  if (!$('#nbFrom').value) $('#nbFrom').value = Math.min(200, q[1] + 1);
-  if (!$('#nbTo').value) $('#nbTo').value = Math.min(200, q[1] + len);
+  const pk = $('#nbPick');
+  if (document.activeElement === pk) return;
+  // suggest the quarter after this one (or before it, for those memorizing from the end of the muṣḥaf)
+  const rq = recentQ(), back = !!rq && rq[0] > q[0], k = rubExact(q);
+  bannerCont = null;
+  let selK = -1;
+  if (k >= 0) selK = back ? Math.max(0, k - 1) : Math.min(239, k + 1);
+  else if (!back && q[1] < TOTAL) bannerCont = [q[1] + 1, Math.min(TOTAL, q[1] + q[1] - q[0] + 1)];
+  else selK = rubOf(back ? Math.max(1, q[0] - 1) : Math.min(TOTAL, q[1] + 1));
+  const key = `${S.lang}|${q}|${selK}|${bannerCont}`;
+  if (pk.dataset.key === key) return;
+  pk.dataset.key = key;
+  pk.innerHTML = (bannerCont ? `<option value="c" selected>${esc(L().contQ(rng(bannerCont)))}</option>` : '') + rubOptions(selK, !bannerCont);
 }
+let bannerCont = null;
 
 function renderHow() {
   const t = L(), a = active();
@@ -1821,18 +1991,20 @@ $('#busyBtn').addEventListener('click', () => {
   for (const key of Object.keys(S.busy)) if (!key.startsWith(WEEK)) delete S.busy[key];
   save(); renderStrip(); renderDay(); renderReward();
 });
-['from', 'to'].forEach((k) => $('#' + k).addEventListener('input', (e) => {
-  S.range[k] = e.target.value; S.range.s1 = ''; S.range.s2 = ''; S.range.h1 = '';
-  $('#s1').value = ''; $('#s2').value = '';
-  S.weekKey = WEEK; save(); renderDynamic();
-}));
-['s1', 's2'].forEach((k) => $('#' + k).addEventListener('input', (e) => { S.range[k] = e.target.value; save(); renderDynamic(); }));
-$('#rFrom').addEventListener('input', (e) => { S.recent.from = e.target.value; save(); renderDynamic(); });
-$('#rTo').addEventListener('input', (e) => { S.recent.to = e.target.value; save(); renderDynamic(); });
+['n', 'r'].forEach((p) => {
+  $('#' + p + 'Pick').addEventListener('change', (e) => { if (e.target.value !== '') setRange(p, ...rubRange(+e.target.value)); });
+  ['Sf', 'St'].forEach((id) => $('#' + p + id).addEventListener('change', (e) => customChanged(p, e)));
+  ['Af', 'At'].forEach((id) => $('#' + p + id).addEventListener('input', (e) => customChanged(p, e)));
+  ['Af', 'At'].forEach((id) => $('#' + p + id).addEventListener('blur', () => setTimeout(() => renderRangeUI(p), 0)));
+});
+['s1', 's2'].forEach((k) => $('#' + k).addEventListener('change', (e) => { S.range[k] = e.target.value; save(); renderDynamic(); }));
+$('#len').addEventListener('change', (e) => { S.len = +e.target.value; save(); renderDay(); renderGlance(); });
 $('#nbOk').addEventListener('click', () => {
-  const f = parseInt($('#nbFrom').value, 10), t = parseInt($('#nbTo').value, 10);
+  const v = $('#nbPick').value;
+  const r = v === 'c' ? bannerCont : v !== '' ? rubRange(+v) : null;
   const q = quarter();
-  if (!valid(f, t)) { $('#nbFrom').focus(); return; }
+  if (!r) { $('#nbPick').focus(); return; }
+  const [f, t] = r;
   if (q) S.recent = { from: String(q[0]), to: String(q[1]) };
   S.range = { from: String(f), to: String(t), s1: '', s2: '', h1: '' };
   S.size = 'normal'; S.hw = 1;
@@ -1849,7 +2021,7 @@ $('#sizeNormal').addEventListener('click', () => { S.size = 'normal'; S.hw = 1; 
 $('#sizeHeavy').addEventListener('click', () => { S.size = 'heavy'; S.hw = 1; resetSplits(); save(); renderDynamic(); });
 $('#hw1').addEventListener('click', () => { S.hw = 1; resetSplits(); save(); renderDynamic(); });
 $('#hw2').addEventListener('click', () => { S.hw = 2; resetSplits(); save(); renderDynamic(); });
-$('#h1').addEventListener('input', (e) => { S.range.h1 = e.target.value; resetSplits(); save(); renderDynamic(); });
+$('#h1').addEventListener('change', (e) => { S.range.h1 = e.target.value; resetSplits(); save(); renderDynamic(); });
 $('#nbHalf2').addEventListener('click', () => { S.hw = 2; resetSplits(); S.weekKey = WEEK; save(); renderStatic(); renderDynamic(); });
 $('#nbRepeat').addEventListener('click', () => { S.weekKey = WEEK; save(); renderDynamic(); });
 $('#nbLater').addEventListener('click', () => { bannerDismissed = true; renderBanner(); });
