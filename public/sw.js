@@ -1,5 +1,5 @@
 // Network-first for the page, cache fallback so the plan opens offline.
-const C='qbq-v4';
+const C='qbq-v5';
 const CORE=['/','/manifest.webmanifest','/icons/icon-192.png'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>c.addAll(CORE.map(x=>new Request(x,{cache:'reload'})))));});
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

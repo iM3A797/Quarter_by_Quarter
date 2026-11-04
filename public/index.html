@@ -64,7 +64,7 @@ button,input,select{font:inherit;color:inherit}
 /* header */
 .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
 h1{margin:0;font-family:var(--display-en);font-style:italic;font-weight:500;font-size:clamp(34px,6vw,46px);line-height:1;letter-spacing:-.01em}
-[lang="ar"] h1{font-family:var(--display-ar);font-style:normal;font-weight:700;letter-spacing:0}
+[lang="ar"] h1{font-family:var(--display-ar);font-style:normal;font-weight:700;letter-spacing:0;line-height:1.35}
 .lede{margin:8px 0 0;color:var(--muted);max-width:60ch;font-size:14px;text-wrap:pretty}
 .lang{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:14px;flex:none}
 .lang:hover{border-color:var(--accent)}
@@ -161,7 +161,7 @@ textarea{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--
 .teacher{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
 .teacher label{font-size:13px;font-weight:600}
 .planof{margin:0 0 4px;font-size:12.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
-[lang="ar"] .planof{letter-spacing:0;text-transform:none;font-size:14px}
+[lang="ar"] .planof{letter-spacing:0;text-transform:none;font-size:14px;margin-bottom:0}
 .hello{margin-top:10px}
 .acct{margin-top:10px;display:flex;gap:8px 10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
 .acct .gbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:600;cursor:pointer}
@@ -175,6 +175,9 @@ textarea{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--
 .name-form{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)}
 .name-row{display:flex;gap:8px;flex-wrap:wrap}
 .name-row input{flex:1;min-width:10em;max-width:18em}
+.name-pair{display:grid;grid-template-columns:auto minmax(0,18em);gap:6px 10px;align-items:center}
+.name-pair label{font-size:13px}
+.name-note{margin:0;font-size:12.5px}
 .pick{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
 .pick label{font-size:13px;color:var(--muted)}
 .pick select{max-width:100%}
@@ -791,6 +794,7 @@ const rubExact = (r) => { if (!r) return -1; const k = rubOf(r[0]), x = rubRange
 
 // Old saves stored ayah numbers of Āl ʿImrān only; turn them into running positions once.
 function migrate(st) {
+  if (st.name && !st.names) st.names = namesFrom(st.name);
   if (st.qv === 2) return;
   const g3 = (v) => { const n = parseInt(v, 10); return Number.isInteger(n) && n >= 1 && n <= 200 ? String(gOf(3, n)) : ''; };
   if (st.range) for (const k of ['from', 'to', 's1', 's2', 'h1']) if (st.range[k]) st.range[k] = g3(st.range[k]);
@@ -798,6 +802,121 @@ function migrate(st) {
   if (Array.isArray(st.history)) for (const h of st.history) if (Array.isArray(h.range)) h.range = h.range.map((n) => gOf(3, n));
   st.qv = 2;
 }
+
+// ---- the name, in English and in Arabic. Typing it in one language fills in the other:
+// common names come from a list, anything else is spelled letter by letter, and both can be corrected.
+const NAME_LIST = [
+  ['Mohamed', 'محمد', 'muhammad mohammed mohammad muhammed mohamad'], ['Ahmed', 'أحمد', 'ahmad'], ['Mahmoud', 'محمود', 'mahmud'], ['Mostafa', 'مصطفى', 'mustafa moustafa'],
+  ['Ali', 'علي'], ['Omar', 'عمر', 'umar'], ['Amr', 'عمرو'], ['Hassan', 'حسن', 'hasan'], ['Hussein', 'حسين', 'hussain husein'], ['Ibrahim', 'إبراهيم', 'ebrahim'],
+  ['Youssef', 'يوسف', 'yousef yusuf yousif joseph'], ['Khaled', 'خالد', 'khalid'], ['Karim', 'كريم', 'kareem'], ['Tarek', 'طارق', 'tariq tarik'], ['Hamza', 'حمزة', 'hamzah'],
+  ['Bilal', 'بلال'], ['Adam', 'آدم'], ['Ziad', 'زياد', 'ziyad'], ['Seif', 'سيف', 'saif sayf'], ['Yassin', 'ياسين', 'yasin yaseen'], ['Anas', 'أنس'], ['Osama', 'أسامة', 'usama'],
+  ['Hesham', 'هشام', 'hisham'], ['Walid', 'وليد', 'waleed'], ['Sherif', 'شريف', 'sharif'], ['Ayman', 'أيمن'], ['Ashraf', 'أشرف'], ['Tamer', 'تامر'], ['Hany', 'هاني', 'hani'],
+  ['Sameh', 'سامح'], ['Saeed', 'سعيد', 'said saied'], ['Samir', 'سمير', 'sameer'], ['Emad', 'عماد', 'imad'], ['Ehab', 'إيهاب', 'ihab'], ['Ismail', 'إسماعيل', 'ismael esmail'],
+  ['Moaz', 'معاذ', 'muadh muaz'], ['Zakaria', 'زكريا', 'zakariya zakariyya'], ['Yahya', 'يحيى'], ['Eissa', 'عيسى', 'isa issa'], ['Moussa', 'موسى', 'musa mousa'],
+  ['Haroun', 'هارون', 'harun'], ['Suleiman', 'سليمان', 'sulaiman soliman'], ['Dawoud', 'داود', 'dawood dawud'], ['Nouh', 'نوح', 'nuh'], ['Saleh', 'صالح', 'salih'],
+  ['Salah', 'صلاح'], ['Gamal', 'جمال', 'jamal'], ['Kamal', 'كمال'], ['Adel', 'عادل', 'adil'], ['Amir', 'أمير', 'ameer'], ['Fady', 'فادي', 'fadi'], ['Ramy', 'رامي', 'rami'],
+  ['Mazen', 'مازن', 'mazin'], ['Nader', 'نادر', 'nadir'], ['Hazem', 'حازم', 'hazim'], ['Hatem', 'حاتم', 'hatim'], ['Magdy', 'مجدي', 'majdi magdi'], ['Ramadan', 'رمضان'],
+  ['Taha', 'طه'], ['Islam', 'إسلام', 'eslam'], ['Mohanad', 'مهند', 'muhannad mohannad'], ['Badr', 'بدر'], ['Fares', 'فارس', 'faris'], ['Rayan', 'ريان', 'rayyan'],
+  ['Hamdy', 'حمدي', 'hamdi'], ['Fathy', 'فتحي', 'fathi'], ['Sayed', 'سيد', 'sayyid'], ['Nasser', 'ناصر', 'nasir naser'], ['Mansour', 'منصور', 'mansur'],
+  ['Othman', 'عثمان', 'uthman osman'], ['Hamed', 'حامد', 'hamid'], ['Hamid', 'حميد'], ['Abdo', 'عبده'], ['Abu Bakr', 'أبو بكر', 'abubakr abubakar'], ['Yazan', 'يزن'],
+  ['Mariam', 'مريم', 'maryam miriam mary'], ['Fatma', 'فاطمة', 'fatima fatimah'], ['Aisha', 'عائشة', 'aysha aishah'], ['Khadija', 'خديجة', 'khadijah'], ['Zainab', 'زينب', 'zeinab zaynab'],
+  ['Sara', 'سارة', 'sarah'], ['Nour', 'نور', 'noor nur'], ['Salma', 'سلمى'], ['Mona', 'منى', 'muna'], ['Huda', 'هدى', 'hoda'], ['Heba', 'هبة', 'hiba'], ['Aya', 'آية', 'ayah'],
+  ['Esraa', 'إسراء', 'israa isra'], ['Asmaa', 'أسماء', 'asma'], ['Amina', 'أمينة', 'aminah'], ['Yasmin', 'ياسمين', 'yasmine yasmeen jasmine'], ['Rana', 'رنا'], ['Reem', 'ريم', 'rim'],
+  ['Laila', 'ليلى', 'layla leila'], ['Habiba', 'حبيبة'], ['Rahma', 'رحمة'], ['Malak', 'ملك'], ['Jana', 'جنى'], ['Mai', 'مي', 'may'], ['Dina', 'دينا'], ['Eman', 'إيمان', 'iman'],
+  ['Nada', 'ندى'], ['Doaa', 'دعاء', 'duaa doa'], ['Shaimaa', 'شيماء', 'shaima'], ['Rania', 'رانيا'], ['Samar', 'سمر'], ['Amal', 'أمل'], ['Hagar', 'هاجر', 'hajar hager'],
+  ['Ola', 'علا', 'ula'], ['Walaa', 'ولاء'], ['Sohaila', 'سهيلة', 'suhaila'], ['Menna', 'منة'], ['Basma', 'بسمة'], ['Shahd', 'شهد'], ['Rawan', 'روان'], ['Lina', 'لينا'],
+  ['Farida', 'فريدة'], ['Marwa', 'مروة'], ['Hana', 'هناء'], ['Nesma', 'نسمة'], ['Rokaya', 'رقية', 'ruqayya ruqaya'], ['Safiya', 'صفية', 'safia'], ['Hafsa', 'حفصة'],
+  ['Sumaya', 'سمية', 'somaya sumayya'], ['Lamia', 'لمياء'], ['Ghada', 'غادة'], ['Nermeen', 'نرمين', 'nermin'], ['Alaa', 'علاء'], ['Diaa', 'ضياء', 'diya'],
+  ['Hind', 'هند'], ['Noha', 'نهى', 'nuha'], ['Salwa', 'سلوى'], ['Anwar', 'أنور'], ['Gamila', 'جميلة', 'jamila jamilah'], ['Manar', 'منار'], ['Nahla', 'نهلة'],
+  ['Wafaa', 'وفاء'], ['Abeer', 'عبير', 'abir'], ['Soha', 'سها'], ['Sahar', 'سحر'], ['Nabil', 'نبيل', 'nabeel'], ['Wael', 'وائل'], ['Raafat', 'رأفت'], ['Medhat', 'مدحت'],
+  ['John', 'جون'], ['Michael', 'مايكل'], ['Peter', 'بيتر'], ['Mark', 'مارك'], ['George', 'جورج'], ['Mina', 'مينا'], ['Maria', 'ماريا'], ['Sophia', 'صوفيا', 'sofia'],
+];
+// the second half of عبد… names (عبد الرحمن → Abdulrahman)
+const ABD = [['الله', 'llah'], ['الرحمن', 'rahman'], ['الرحيم', 'rahim'], ['الحميد', 'hamid'], ['العزيز', 'aziz'], ['الكريم', 'karim'], ['الملك', 'malik'],
+  ['القادر', 'qader'], ['الفتاح', 'fattah'], ['الغفار', 'ghaffar'], ['الحليم', 'halim'], ['الباسط', 'basit'], ['الصمد', 'samad'], ['الوهاب', 'wahab'], ['الرزاق', 'razzaq'],
+  ['اللطيف', 'latif'], ['المنعم', 'moneim'], ['المجيد', 'majid'], ['الحكيم', 'hakim'], ['السلام', 'salam'], ['العظيم', 'azim'], ['الجبار', 'gabbar'], ['الهادي', 'hadi'],
+  ['الناصر', 'naser'], ['الستار', 'sattar'], ['الخالق', 'khaliq'], ['الحي', 'hay'], ['التواب', 'tawab'], ['الشافي', 'shafi'], ['الواحد', 'wahid'], ['الرؤوف', 'raouf'],
+  ['الودود', 'wadoud'], ['العليم', 'alim'], ['الرشيد', 'rashid'], ['الجليل', 'galil'], ['العال', 'aal'], ['المطلب', 'muttalib'], ['الغني', 'ghani'], ['المحسن', 'mohsen']];
+const isArabic = (x) => /[؀-ۿ]/.test(x);
+const normAr = (w) => w.replace(/[ً-ٰٟـ]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي');
+const cap = (w) => w.charAt(0).toUpperCase() + w.slice(1);
+const NAME_AR = new Map(), NAME_EN = new Map();
+for (const [en, ar, alt] of NAME_LIST) {
+  if (!NAME_AR.has(normAr(ar))) NAME_AR.set(normAr(ar), en);
+  for (const k of [en, ...(alt ? alt.split(' ') : [])]) { const kk = k.toLowerCase().replace(/\s+/g, ''); if (!NAME_EN.has(kk)) NAME_EN.set(kk, ar); }
+}
+function arWordToEn(w) {
+  const known = NAME_AR.get(normAr(w));
+  if (known) return known;
+  const m = { 'ا': 'a', 'أ': 'a', 'إ': 'i', 'آ': 'a', 'ء': '', 'ئ': 'e', 'ؤ': 'o', 'ب': 'b', 'ت': 't', 'ث': 'th', 'ج': 'g', 'ح': 'h', 'خ': 'kh', 'د': 'd', 'ذ': 'z',
+    'ر': 'r', 'ز': 'z', 'س': 's', 'ش': 'sh', 'ص': 's', 'ض': 'd', 'ط': 't', 'ظ': 'z', 'ع': 'a', 'غ': 'gh', 'ف': 'f', 'ق': 'k', 'ك': 'k', 'ل': 'l', 'م': 'm', 'ن': 'n',
+    'ه': 'h', 'ة': 'a', 'و': 'o', 'ي': 'y', 'ى': 'a' };
+  const ch = [...w.replace(/[ً-ٰٟـ]/g, '')];
+  let out = '';
+  ch.forEach((c, i) => {
+    let v = m[c] ?? '';
+    if (c === 'ي') v = i === 0 || 'اوي'.includes(ch[i + 1] || '') ? 'y' : 'i';
+    if (c === 'و') v = i === 0 ? 'w' : 'ou';
+    if (c === 'ع' && i > 0 && /[aeiou]$/.test(out)) v = '';
+    const vowel = /^[aeiou]/.test(v), prevVowel = /[aeiou]$/.test(out);
+    // a short vowel is not written in Arabic: put an "a" between two consonants inside the word
+    if (out && !vowel && !prevVowel && v && i < ch.length - 1 && i > 0) out += 'a';
+    out += v;
+  });
+  return cap(out.replace(/aa+/g, 'a').replace(/(.)\1\1+/g, '$1$1'));
+}
+function enWordToAr(w) {
+  const lw = w.toLowerCase();
+  const known = NAME_EN.get(lw);
+  if (known) return known;
+  let out = '', i = 0;
+  const two = { sh: 'ش', kh: 'خ', th: 'ث', gh: 'غ', ch: 'تش', ph: 'ف', ou: 'و', oo: 'و', ee: 'ي', ei: 'ي', ai: 'اي', ay: 'اي', aa: 'ا', ck: 'ك' };
+  const one = { b: 'ب', c: 'ك', d: 'د', f: 'ف', g: 'ج', h: 'ه', j: 'ج', k: 'ك', l: 'ل', m: 'م', n: 'ن', p: 'ب', q: 'ق', r: 'ر', s: 'س', t: 'ت', v: 'ف', w: 'و',
+    x: 'كس', y: 'ي', z: 'ز', a: 'ا', e: 'ي', i: 'ي', o: 'و', u: 'و' };
+  while (i < lw.length) {
+    const d = lw.slice(i, i + 2), c = lw[i];
+    if (i === 0 && 'aeiou'.includes(c)) { out += c === 'a' ? 'أ' : c === 'o' || c === 'u' ? 'أو' : 'إ'; i += two[d] && 'aeiou'.includes(d[1]) ? 2 : 1; continue; }
+    if (two[d]) { out += two[d]; i += 2; continue; }
+    if (c === lw[i - 1] && !'aeiou'.includes(c)) { i += 1; continue; }          // double letters: once
+    if (c === 'e' && i === lw.length - 1 && i > 1) { i += 1; continue; }         // silent final e
+    if (c === 'h' && i === lw.length - 1 && lw[i - 1] === 'a') { out = out.replace(/ا$/, '') + 'ة'; i += 1; continue; }
+    out += one[c] || ''; i += 1;
+  }
+  return out;
+}
+function translateName(name, to) {
+  const n = name.trim();
+  if (!n || isArabic(n) === (to === 'ar')) return n;
+  if (to === 'en') {
+    const words = n.replace(/عبد\s*ال/g, 'عبد ال').split(/\s+/), out = [];
+    for (let i = 0; i < words.length; i++) {
+      if (words[i] === 'عبد' && words[i + 1]) {
+        const hit = ABD.find(([a]) => a === words[i + 1]);
+        const tail = hit ? hit[1] : arWordToEn(words[i + 1].replace(/^ال/, '')).toLowerCase();
+        out.push(tail === 'llah' ? 'Abdullah' : 'Abdul' + tail);
+        i += 1;
+      } else out.push(arWordToEn(words[i]));
+    }
+    return out.join(' ');
+  }
+  // "Abdul Hamid", "Abd El-Hamid", "Abdel Hamid" → one word
+  return n.replace(/\babd\s*(?:u|e|a)?l?[\s-]+(?:el[\s-]+)?(?=[a-z])/gi, 'Abdul').split(/\s+/).map((w) => {
+    const m = w.match(/^abd(?:u|e)?l?[- ]?(.+)$/i);
+    if (m && !NAME_EN.has(w.toLowerCase())) {
+      const rest = m[1].toLowerCase().replace(/^l+/, '');
+      const hit = ABD.find(([, e]) => e.replace(/^l+/, '') === rest);
+      return 'عبد ' + (hit ? hit[0] : 'ال' + enWordToAr(rest));
+    }
+    return enWordToAr(w);
+  }).join(' ');
+}
+// the name as entered: S.names = { en, ar }; older saves only have S.name
+function namesFrom(typed) {
+  const n = (typed || '').trim().slice(0, 30);
+  if (!n) return { en: '', ar: '' };
+  return isArabic(n) ? { ar: n, en: translateName(n, 'en') } : { en: n, ar: translateName(n, 'ar') };
+}
+const myName = () => { const n = S.names || {}; return (n[S.lang] || n.en || n.ar || S.name || '').trim(); };
 
 // ---------------------------------------------------------------- state
 const defaults = { name: '', history: [], partPick: {}, size: 'normal', hw: 1, winW: {}, wins: [], reward: {}, lang: 'en', start: 630, range: { from: '', to: '', s1: '', s2: '' }, recent: { from: '', to: '' }, reviews: ['', '', '', ''], weekKey: null, busy: {}, progress: {}, len: 90 };
@@ -1345,6 +1464,7 @@ function setupExtras() {
 const K_TXT = {
   en: {
     helloQ: 'Make it yours: what’s your name?', namePh: 'Your name', saveName: 'Save',
+    nameEn: 'In English', nameAr: 'In Arabic', nameCheck: 'Your name is shown in both languages. We filled in the other spelling: correct it if it isn’t right.',
     hello: (n) => `As-salāmu ʿalaykum, ${n}`, edit: 'Edit name', planOf: (n) => `${n}’s plan`,
     doneN: (n) => [`Done for today, ${n}. May Allah accept it.`, `This day is complete, ${n}. May Allah accept it.`],
     heartQN: (n) => `How is your heart after today, ${n}?`,
@@ -1369,6 +1489,7 @@ const K_TXT = {
   },
   ar: {
     helloQ: 'لتكن الخطة باسمك: ما الاسم؟', namePh: 'الاسم', saveName: 'حفظ',
+    nameEn: 'بالإنجليزية', nameAr: 'بالعربية', nameCheck: 'يظهر الاسم باللغتين، وكُتبت التهجئة الأخرى تلقائيًا؛ تُعدَّل إن لم تكن صحيحة.',
     hello: (n) => `السلام عليكم يا ${n}`, edit: 'تعديل الاسم', planOf: (n) => `خطة ${n}`,
     doneN: (n) => [`اكتمل ورد اليوم يا ${n}. تقبّل الله.`, `اكتمل هذا اليوم يا ${n}. تقبّل الله.`],
     heartQN: (n) => `كيف القلب بعد ورد اليوم يا ${n}؟`,
@@ -1393,7 +1514,7 @@ const K_TXT = {
   },
 };
 const KX = () => K_TXT[S.lang];
-const myName = () => (S.name || '').trim();
+
 
 // ---- which part is memorized on a session day (defaults catch up automatically)
 function memorizedBefore(d) {
@@ -1644,27 +1765,45 @@ function renderKeep() {
 
 let nameEditing = false;
 function renderName() {
-  const K = KX(), n = myName();
+  const K = KX(), n = myName(), nm = S.names || { en: '', ar: '' };
   $('#planOf').hidden = !n;
   if (n) $('#planOf').textContent = K.planOf(n);
   const box = $('#hello');
   if (n && !nameEditing) {
     box.innerHTML = `<p class="hello-line">${esc(K.hello(n))} <button type="button" class="linkbtn" id="nameEdit">${esc(K.edit)}</button></p>`;
+  } else if (n) {
+    // both spellings, so a wrong automatic one can be corrected
+    box.innerHTML = `<form class="name-form" id="nameForm" data-both="1"><span class="name-pair">
+      <label for="nameEn">${esc(K.nameEn)}</label><input type="text" id="nameEn" maxlength="30" lang="en" dir="ltr" autocomplete="off" value="${esc(nm.en)}">
+      <label for="nameAr">${esc(K.nameAr)}</label><input type="text" id="nameAr" maxlength="30" lang="ar" dir="rtl" autocomplete="off" value="${esc(nm.ar)}">
+      </span><p class="hint name-note">${esc(K.nameCheck)}</p>
+      <button type="submit" class="toggle save" style="align-self:flex-start">${esc(K.saveName)}</button></form>`;
   } else {
     box.innerHTML = `<form class="name-form" id="nameForm"><label for="nameIn">${esc(K.helloQ)}</label>
-      <span class="name-row"><input type="text" id="nameIn" maxlength="30" autocomplete="given-name" placeholder="${esc(K.namePh)}" value="${esc(n)}">
+      <span class="name-row"><input type="text" id="nameIn" maxlength="30" autocomplete="given-name" placeholder="${esc(K.namePh)}">
       <button type="submit" class="toggle save">${esc(K.saveName)}</button></span></form>`;
   }
 }
 
 function setupKeep() {
   $('#hello').addEventListener('click', (e) => {
-    if (e.target.id === 'nameEdit') { nameEditing = true; renderName(); $('#nameIn').focus(); }
+    if (e.target.id === 'nameEdit') { nameEditing = true; renderName(); $(S.lang === 'ar' ? '#nameAr' : '#nameEn').focus(); }
   });
   $('#hello').addEventListener('submit', (e) => {
     e.preventDefault();
-    S.name = $('#nameIn').value.trim().slice(0, 30);
-    nameEditing = false; save(); renderName(); renderDynamic();
+    if (e.target.dataset.both) {
+      const en = $('#nameEn').value.trim().slice(0, 30), ar = $('#nameAr').value.trim().slice(0, 30);
+      // a field left empty is filled from the other one
+      S.names = { en: en || translateName(ar, 'en'), ar: ar || translateName(en, 'ar') };
+      S.name = S.names[S.lang] || S.names.en || S.names.ar;
+      nameEditing = false;
+    } else {
+      S.names = namesFrom($('#nameIn').value);
+      S.name = S.names[S.lang] || '';
+      nameEditing = !!S.name; // show both spellings once, to check the automatic one
+    }
+    save(); renderName(); renderDynamic();
+    if (nameEditing) $(S.lang === 'ar' ? '#nameEn' : '#nameAr').focus();
   });
   $('#saveCardBtn').addEventListener('click', () => saveCard(snapshot(WEEK)));
   $('#rewardCardBtn').addEventListener('click', () => saveCard(snapshot(WEEK)));
@@ -2048,9 +2187,11 @@ const TX = {
 const tx = () => TX[document.documentElement.lang === 'ar' ? 'ar' : 'en'];
 const G = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.7 13.2l7.8 6C12.4 13.7 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.8c-.5-1.5-.8-3.1-.8-4.8s.3-3.3.8-4.8l-7.8-6C1 16.5 0 20.1 0 24s1 7.5 2.7 10.8l7.8-6z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.2-13.5-10l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>';
 const esc = (s) => String(s || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-let user = null, status = 'ok', failed = false;
+let user = null, status = 'ok', failed = false, authKnown = false;
 function draw() {
   const t = tx();
+  // nothing to show until Firebase has loaded and reported who (if anyone) is signed in
+  if (!fb || !authKnown) { box.hidden = true; return; }
   box.hidden = false;
   if (!user) {
     box.innerHTML = `<button type="button" class="gbtn" id="gIn">${G}${esc(t.cta)}</button><span>${esc(failed ? t.fail : t.hint)}</span>`;
@@ -2081,11 +2222,12 @@ async function boot() {
   catch (e) { db = fsM.getFirestore(app); }
   fb = { auth, signOut: authM.signOut, authM, fsM, db };
   authM.getRedirectResult(auth).catch(() => { failed = true; draw(); });
-  authM.onAuthStateChanged(auth, (u) => { user = u; failed = false; attach(); draw(); });
+  authM.onAuthStateChanged(auth, (u) => { user = u; failed = false; authKnown = true; attach(); draw(); });
   draw();
 }
 
 async function signIn() {
+  if (!fb) return;
   const { authM, auth } = fb; const p = new authM.GoogleAuthProvider();
   p.setCustomParameters({ prompt: 'select_account' });
   const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
