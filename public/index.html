@@ -1,0 +1,1979 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Quarter by Quarter</title>
+<meta name="description" content="A weekly plan for memorizing one quarter (rubʿ) of the Qur'an at a time, with daily review.">
+<meta name="theme-color" content="#2c6a5c">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Quarter by Quarter">
+<style>[hidden]{display:none!important}body{margin:0}</style>
+</head>
+<body>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500&display=swap">
+<style>
+/* Layout: a pocket agenda. The week strip stays on top, today's session reads as a timed agenda,
+   and the quarters + method sit beside it on wide screens and below it on phones. */
+:root{
+  --bg:#f4f6f3;
+  --surface:#ffffff;
+  --ink:#1a2624;
+  --muted:#5f6d69;
+  --line:#dde3df;
+  --accent:#2c6a5c;      /* mushaf-margin green */
+  --accent-soft:#e3efea;
+  --gold:#b98a2e;        /* recent / today */
+  --gold-soft:#f6ecd6;
+  --slate:#4f5f7a;       /* review */
+  --slate-soft:#e7ebf3;
+  --sky:#3f7d9c;         /* listen */
+  --sky-soft:#e2eff5;
+  --rest:#8a948f;
+  --display-en:"Newsreader",Georgia,"Times New Roman",serif;
+  --display-ar:"Amiri","Traditional Arabic","Times New Roman",serif;
+  --body:"IBM Plex Sans Arabic","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1514;--surface:#172020;--ink:#e3ebe7;--muted:#9aa8a3;--line:#283331;
+  --accent:#7cc3ae;--accent-soft:#1d322c;--gold:#e2b55a;--gold-soft:#33291a;
+  --slate:#a3b2d4;--slate-soft:#232a39;--sky:#87c0db;--sky-soft:#1b2d36;--rest:#7d8884;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1514;--surface:#172020;--ink:#e3ebe7;--muted:#9aa8a3;--line:#283331;
+  --accent:#7cc3ae;--accent-soft:#1d322c;--gold:#e2b55a;--gold-soft:#33291a;
+  --slate:#a3b2d4;--slate-soft:#232a39;--sky:#87c0db;--sky-soft:#1b2d36;--rest:#7d8884;color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:16px;padding-block:20px 48px}
+
+/* header */
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+h1{margin:0;font-family:var(--display-en);font-style:italic;font-weight:500;font-size:clamp(34px,6vw,46px);line-height:1;letter-spacing:-.01em}
+[lang="ar"] h1{font-family:var(--display-ar);font-style:normal;font-weight:700;letter-spacing:0}
+.lede{margin:8px 0 0;color:var(--muted);max-width:60ch;font-size:14px;text-wrap:pretty}
+.lang{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:14px;flex:none}
+.lang:hover{border-color:var(--accent)}
+
+.how{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-inline-start:3px solid var(--accent);border-radius:12px;padding:14px 16px}
+.how h2{margin:0;font-size:14px;font-weight:600;color:var(--accent)}
+.how ol{margin:8px 0 0;padding-inline-start:1.3em;display:flex;flex-direction:column;gap:6px;font-size:14.5px}
+.how li::marker{color:var(--accent);font-weight:600}
+.how b{font-weight:600}
+.quote{margin:14px 0 0;padding:14px 16px 12px;border-radius:12px;background:linear-gradient(135deg,var(--gold-soft),color-mix(in srgb,var(--gold-soft) 35%,var(--surface)));border:1px solid color-mix(in srgb,var(--gold) 30%,transparent)}
+.quote-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11.5px;font-weight:600;color:var(--gold);letter-spacing:.06em;text-transform:uppercase}
+[lang="ar"] .quote-top{letter-spacing:0;text-transform:none;font-size:13px}
+.quote-next{background:none;border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);color:var(--gold);border-radius:999px;padding:3px 10px;font-size:12px;cursor:pointer;letter-spacing:0;text-transform:none}
+.quote-next:hover{background:var(--surface)}
+.quote-ar{margin:8px 0 0;font-family:var(--display-ar);font-size:21px;line-height:1.9;color:var(--ink);text-align:right;text-wrap:pretty}
+.quote-ar.is-quran{font-size:23px}
+.quote-en{margin:6px 0 0;font-size:13.5px;color:var(--muted);font-style:italic;text-align:left;text-wrap:pretty}
+.quote-src{margin:6px 0 0;font-size:12px;color:var(--gold);font-weight:500}
+@media (max-width:420px){.quote-ar{font-size:19px}.quote-ar.is-quran{font-size:21px}}
+.reward-lede{margin:6px 0 0;color:var(--muted);font-size:14px;text-wrap:pretty}
+.reward-lede.big{color:var(--gold);font-family:var(--display-en);font-style:italic;font-size:24px;line-height:1.2}
+[lang="ar"] .reward-lede.big{font-family:var(--display-ar);font-style:normal;font-weight:700}
+.reward-bar{margin-top:12px;height:8px;border-radius:999px;background:var(--line);overflow:hidden;--p:0}
+.reward-bar span{display:block;height:100%;width:calc(var(--p)*100%);background:var(--accent);border-radius:inherit;transition:width .4s}
+.reward.won .reward-bar span{background:var(--gold)}
+.reward-stats{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.reward-stats .tas.ok{color:var(--accent);font-weight:600}
+.reward-chosen{margin:12px 0 0;font-weight:600}
+.reward-thanks{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+.reward-label{margin-top:14px;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+[lang="ar"] .reward-label{letter-spacing:0;text-transform:none;font-size:13px}
+.ideas{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.idea{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;text-align:start}
+.idea:hover{border-color:var(--gold)}
+.idea.on{background:var(--gold-soft);border-color:var(--gold);color:var(--ink);font-weight:600}
+.reward-custom{margin-top:8px;width:100%}
+.reward-pick summary,.reward-big summary{cursor:pointer;list-style-position:inside}
+.reward-pick summary::marker,.reward-big summary::marker{color:var(--gold)}
+.reward-big{margin-top:16px;padding-top:12px;border-top:1px dashed var(--line)}
+.reward-big.lit{border-top-color:var(--gold)}
+.reward-hizb{margin:0;font-size:13px;color:var(--muted)}
+.reward.won{border-color:var(--gold);background:linear-gradient(160deg,var(--gold-soft),var(--surface) 55%)}
+.size{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.size-lbl{font-size:13px;color:var(--muted)}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--bg);max-width:100%}
+.segb{border:0;background:none;border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer;color:var(--muted)}
+.segb[aria-pressed="true"]{background:var(--accent);color:var(--surface);font-weight:600}
+.heavy{display:flex;flex-direction:column;gap:8px;padding:10px 12px;border-radius:10px;background:var(--accent-soft)}
+.heavy .seg{background:var(--surface);align-self:flex-start}
+.hint.warn{color:var(--gold)}
+.heart{margin-top:12px;padding:14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);text-align:center}
+.heart-q{margin:0;font-weight:600}
+.heart-scale{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:10px}
+.hbtn{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:4px 0;cursor:pointer;color:var(--muted);font-size:11.5px;line-height:1.2;min-width:0}
+.hbtn svg{width:30px;height:30px;fill:transparent;stroke:var(--gold);stroke-width:1.6;transition:transform .15s,fill .15s}
+.hbtn.fill svg{fill:var(--gold)}
+.hbtn.on{color:var(--ink);font-weight:600}
+.hbtn.on svg{transform:scale(1.15)}
+.hbtn:hover svg{transform:scale(1.1)}
+.heart-say{margin:10px 0 0;font-size:14px;color:var(--muted);text-wrap:pretty}
+#heartDiary{margin-top:10px}
+.hdot{display:block;line-height:0;margin-top:-1px}
+.hdot svg{width:11px;height:11px;fill:var(--gold);opacity:calc(.3 + var(--h) * .14)}
+
+.diary-form{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.diary-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.diary-row label{font-size:13px;color:var(--muted)}
+.diary-row #dOther{flex:1;min-width:8em}
+textarea{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;resize:vertical;width:100%;min-height:4.5em}
+.toggle.save{align-self:flex-start;background:var(--accent);color:var(--surface);border-color:var(--accent);font-weight:600}
+.diary-list{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.entry{padding:12px;border-radius:12px;background:var(--bg);border-inline-start:3px solid var(--gold)}
+.entry.empty{border-inline-start-color:var(--line);color:var(--muted);font-size:13.5px}
+.entry-top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:baseline}
+.entry-top span{font-size:12px;color:var(--muted)}
+.entry-note{margin:6px 0 0;white-space:pre-wrap;font-size:14px;overflow-wrap:anywhere}
+.entry-del{margin-top:6px;background:none;border:0;padding:0;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline}
+.sh-lede{margin-top:6px}
+.sheikh-list{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.sheikh{padding:12px;border-radius:12px;background:var(--bg);border:1px solid transparent}
+.sheikh.on{border-color:var(--accent);background:var(--accent-soft)}
+.sh-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.sh-name{font-family:var(--display-ar);font-size:19px;font-weight:700;line-height:1.3}
+.sh-en{font-size:13.5px;font-weight:600}
+.sh-late{font-family:var(--body);font-size:11.5px;font-weight:400;color:var(--muted)}
+.sh-meta{font-size:12px;color:var(--muted)}
+.sh-pick{flex:none;font-size:12px;padding:5px 10px}
+.sh-pick[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.sh-why{margin:6px 0 0;font-size:13.5px;color:var(--muted);text-wrap:pretty}
+.sh-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.sh-tag{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--surface);color:var(--accent);border:1px solid var(--accent-soft)}
+#shLinks{margin-top:10px}
+#shLinks a{color:var(--accent);font-weight:600}
+.teacher{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.teacher label{font-size:13px;font-weight:600}
+.planof{margin:0 0 4px;font-size:12.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+[lang="ar"] .planof{letter-spacing:0;text-transform:none;font-size:14px}
+.hello{margin-top:10px}
+.acct{margin-top:10px;display:flex;gap:8px 10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.acct .gbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:600;cursor:pointer}
+.acct .gbtn:hover{border-color:var(--accent)}
+.acct .gbtn svg{width:16px;height:16px;flex:none}
+.acct .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none}
+.acct .dot.busy{background:var(--gold)}.acct .dot.off{background:var(--rest)}.acct .dot.err{background:#c0392b}
+.acct .who{font-weight:600;color:var(--ink)}
+.hello-line{margin:0;font-size:15px;font-weight:500}
+.linkbtn{background:none;border:0;padding:0;margin-inline-start:6px;color:var(--accent);font-size:13px;text-decoration:underline;cursor:pointer}
+.name-form{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)}
+.name-row{display:flex;gap:8px;flex-wrap:wrap}
+.name-row input{flex:1;min-width:10em;max-width:18em}
+.pick{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pick label{font-size:13px;color:var(--muted)}
+.pick select{max-width:100%}
+.hint.behind{margin:8px 0 0;color:var(--gold)}
+.card-preview{display:block;width:100%;max-width:340px;height:auto;margin:12px auto 0;border-radius:14px;border:1px solid var(--line);box-shadow:0 10px 30px -18px rgba(0,0,0,.45);background:var(--bg)}
+.keep-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.keep-actions label.toggle{cursor:pointer}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.restore-confirm{margin-top:12px;padding:12px;border-radius:12px;background:var(--gold-soft)}
+.restore-confirm p{margin:0}
+.keep-status{min-height:1.4em;margin:8px 0 0;font-size:13.5px;color:var(--accent);font-weight:600}
+.past-h{margin:16px 0 0;padding-top:14px;border-top:1px solid var(--line);font-size:13px;font-weight:600;color:var(--muted)}
+.past{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.past-item{padding:10px 12px;border-radius:12px;background:var(--bg);border-inline-start:3px solid var(--line)}
+.past-item.won{border-inline-start-color:var(--gold)}
+.past-item.empty{color:var(--muted);font-size:13.5px}
+.past-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.past-save{font-size:12px;padding:4px 10px}
+.past-meta{font-size:12.5px;color:var(--muted);margin-top:4px}
+.past-hearts{display:flex;gap:4px;margin-top:6px}
+.ph{width:14px;height:14px;border-radius:50%;background:var(--line);display:grid;place-items:center}
+.ph svg{width:14px;height:14px;fill:var(--gold);opacity:calc(.3 + var(--h) * .14)}
+.ph:has(svg){background:none}
+#rewardCardBtn{margin-top:10px}
+/* banner */
+.banner{margin-top:16px;background:var(--gold-soft);border:1px solid color-mix(in srgb,var(--gold) 40%,transparent);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.banner p{margin:0}
+.banner .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* week strip */
+.strip{position:sticky;top:env(safe-area-inset-top,0px);z-index:3;background:var(--bg);margin-top:18px;padding-block:14px 10px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+/* each day is a small tear-off calendar sheet: binder rings, coloured header, big date */
+.day{position:relative;border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:0 0 7px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;min-width:0;
+  box-shadow:0 2px 0 -1px var(--surface),0 2px 0 0 var(--line),0 4px 0 -1px var(--surface),0 4px 0 0 var(--line);transition:transform .15s,box-shadow .15s}
+.day::before,.day::after{content:"";position:absolute;top:-6px;width:4px;height:11px;border-radius:3px;background:var(--muted);z-index:1}
+.day::before{left:27%}.day::after{right:27%}
+.day .dn{align-self:stretch;background:var(--accent);color:var(--surface);font-size:11px;font-weight:600;padding:7px 2px 4px;border-radius:8px 8px 0 0;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.03em}
+.day[data-d="6"] .dn{background:var(--gold)}
+.day .dd{font-size:22px;font-weight:600;line-height:1.15;margin-top:2px;font-variant-numeric:tabular-nums}
+.ring{width:16px;height:16px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--p)*1turn),var(--line) 0);position:relative}
+.ring::after{content:"";position:absolute;inset:3.5px;border-radius:50%;background:var(--surface)}
+.day.complete .ring{background:var(--accent)}
+.day.complete .ring::after{inset:0;background:none;content:"✓";color:var(--surface);font-size:11px;font-weight:700;line-height:16px;text-align:center}
+.day.today{border-color:var(--gold)}
+.day.today .dd{color:var(--gold)}
+.day.sel{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 0 0 2px var(--accent),0 6px 14px -6px color-mix(in srgb,var(--accent) 60%,transparent)}
+.day .tag{font-size:9.5px;line-height:1;color:var(--gold);font-weight:600}
+
+/* grid */
+.grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px;margin-top:12px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.col{display:flex;flex-direction:column;gap:20px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+.card h2{margin:0;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+[lang="ar"] .card h2{letter-spacing:0;text-transform:none;font-size:14px}
+
+/* day panel */
+.dayhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.dayhead h3{margin:0;font-family:var(--display-en);font-style:italic;font-weight:500;font-size:30px;line-height:1.1}
+[lang="ar"] .dayhead h3{font-family:var(--display-ar);font-style:normal;font-weight:700;font-size:30px}
+.daymeta{color:var(--muted);font-size:14px;margin-top:4px}
+.count{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.controls label{font-size:13px;color:var(--muted)}
+select,input[type=number],input[type=text]{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;min-width:0}
+input[type=number]{width:5.2em;font-variant-numeric:tabular-nums}
+.toggle{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer;background:var(--bg);font-size:13px}
+.toggle[aria-pressed="true"]{background:var(--gold-soft);border-color:var(--gold);color:var(--ink)}
+
+.agenda{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.item{display:grid;grid-template-columns:3.8em minmax(0,1fr) auto;gap:12px;align-items:start;padding:12px;border-radius:12px;background:var(--bg)}
+.item.notime{grid-template-columns:minmax(0,1fr) auto}
+.time{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.35;padding-top:3px}
+.time b{display:block;color:var(--ink);font-weight:600;font-size:14px}
+.body{min-width:0}
+.pill{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;margin-inline-end:6px;vertical-align:1px}
+.t-new .pill{background:var(--accent-soft);color:var(--accent)}
+.t-recent .pill{background:var(--gold-soft);color:var(--gold)}
+.t-review .pill{background:var(--slate-soft);color:var(--slate)}
+.t-listen .pill{background:var(--sky-soft);color:var(--sky)}
+.t-rest .pill{background:transparent;color:var(--rest);border:1px solid var(--line)}
+.t-tasmee .pill{background:var(--accent);color:var(--surface)}
+.t-close .pill{background:transparent;color:var(--accent);border:1px solid var(--accent-soft)}
+.t-light .pill{background:var(--accent-soft);color:var(--accent)}
+.t-tip .pill{background:transparent;color:var(--gold);border:1px dashed var(--gold)}
+.t-rest{background:transparent;border:1px dashed var(--line)}
+.t-tasmee{background:var(--accent-soft)}
+.ttl{font-weight:600}
+.sub{color:var(--accent);font-size:14px;font-weight:500;margin-top:1px}
+.t-review .sub{color:var(--slate)}
+.det{color:var(--muted);font-size:13.5px;margin-top:4px;text-wrap:pretty}
+.check{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);background:var(--surface);cursor:pointer;display:grid;place-items:center;flex:none;padding:0}
+.check svg{width:16px;height:16px;opacity:0}
+.check[aria-checked="true"]{background:var(--accent);border-color:var(--accent)}
+.check[aria-checked="true"] svg{opacity:1;stroke:var(--surface)}
+.item.done .ttl{text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--ink) 40%,transparent)}
+.or{font-size:12px;color:var(--muted);text-align:center;margin:-2px 0}
+.donemsg{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-weight:600;text-align:center}
+
+/* quarters */
+.q{display:flex;flex-direction:column;gap:6px;padding-block:14px;border-top:1px solid var(--line)}
+.q:first-of-type{border-top:0;padding-top:10px}
+.qh{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.qh strong{font-size:15px}
+.qh span{font-size:12.5px;color:var(--muted)}
+.range{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px}
+.parts{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.part{background:var(--accent-soft);color:var(--accent);border-radius:8px;padding:4px 10px;font-size:13px;font-variant-numeric:tabular-nums}
+.splits{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.splits input{width:4.6em;padding:4px 8px}
+.rev{display:grid;grid-template-columns:1.6em minmax(0,1fr);gap:8px;align-items:center}
+.rev .n{width:1.6em;height:1.6em;border-radius:50%;background:var(--slate-soft);color:var(--slate);display:grid;place-items:center;font-size:12px;font-weight:600}
+.rev input{width:100%}
+.rev .when{grid-column:2;font-size:12px;color:var(--muted);margin-top:-2px}
+.hint{font-size:12.5px;color:var(--muted);margin:0}
+
+/* method + life */
+ol.steps{margin:12px 0 0;padding-inline-start:1.3em;display:flex;flex-direction:column;gap:8px}
+ol.steps li{padding-inline-start:4px}
+ol.steps li::marker{color:var(--accent);font-weight:600}
+ul.rules{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+ul.rules li{display:grid;grid-template-columns:minmax(0,1fr);gap:2px}
+ul.rules b{font-weight:600}
+ul.rules span{color:var(--muted);font-size:14px}
+.prio{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px;font-size:13px}
+.prio i{font-style:normal;color:var(--muted)}
+
+/* glance table */
+.tablewrap{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:13px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:start;vertical-align:top}
+thead th{font-weight:600;color:var(--muted);background:var(--bg);font-size:12px}
+tbody th{font-weight:600;color:var(--muted);white-space:nowrap;font-size:12px}
+tr:last-child td,tr:last-child th{border-bottom:0}
+td.sun{background:var(--accent-soft)}
+td.today,th.today{box-shadow:inset 0 -2px 0 var(--gold)}
+.foot{margin-top:24px;color:var(--muted);font-size:12.5px;text-align:center}
+@media (prefers-reduced-motion:no-preference){.check,.day{transition:background .15s,border-color .15s}}
+@media (max-width:420px){
+  .item{grid-template-columns:3.4em minmax(0,1fr) auto;gap:10px;padding:11px 10px}
+  .card{padding:16px 14px}
+  .day .dn{font-size:11px}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="planof" id="planOf" hidden></p>
+      <h1 data-t="title"></h1>
+      <p class="lede" data-t="lede"></p>
+      <div class="hello" id="hello"></div>
+      <div class="acct" id="acct" hidden></div>
+    </div>
+    <button class="lang" id="langBtn" type="button"></button>
+  </header>
+
+  <div class="banner" id="banner" hidden>
+    <p id="bannerText"></p>
+    <div class="row">
+      <span class="row" id="nbInputs"><label for="nbFrom" data-t="fromAyah"></label><input type="number" id="nbFrom" min="1" max="200">
+      <label for="nbTo" data-t="toAyah"></label><input type="number" id="nbTo" min="1" max="200">
+      <button class="toggle" id="nbOk" type="button" data-t="confirm"></button></span>
+      <button class="toggle" id="nbHalf2" type="button" data-t="startHalf2" hidden></button>
+      <button class="toggle" id="nbRepeat" type="button" data-t="repeatHalf1" hidden></button>
+      <button class="toggle" id="nbLater" type="button" data-t="later"></button>
+    </div>
+  </div>
+
+  <section class="how">
+    <h2 data-t="howTitle"></h2>
+    <ol id="howList"></ol>
+  </section>
+
+  <nav class="strip" id="strip" aria-label="Week"></nav>
+
+  <div class="grid">
+    <div class="col">
+      <section class="card" id="dayCard" aria-live="polite">
+        <div class="dayhead">
+          <div><h3 id="dayTitle"></h3><div class="daymeta" id="dayMeta"></div></div>
+          <div class="count" id="dayCount"></div>
+        </div>
+        <figure class="quote" id="quote">
+          <figcaption class="quote-top"><span id="quoteLabel"></span><button type="button" class="quote-next" id="quoteNext"></button></figcaption>
+          <blockquote class="quote-ar" id="quoteText" lang="ar" dir="rtl"></blockquote>
+          <p class="quote-en" id="quoteMeaning" lang="en" dir="ltr"></p>
+          <p class="quote-src" id="quoteSrc"></p>
+        </figure>
+        <div class="controls" id="dayControls">
+          <label for="start" data-t="startAt"></label>
+          <select id="start"></select>
+          <button class="toggle" id="busyBtn" type="button" aria-pressed="false"></button>
+          <span class="pick"><label for="partPick" id="partPickLbl"></label><select id="partPick"></select></span>
+        </div>
+        <p class="hint behind" id="behindNote" hidden></p>
+        <ol class="agenda" id="agenda"></ol>
+        <div class="donemsg" id="doneMsg" hidden></div>
+        <div class="heart" id="heartBox" hidden>
+          <p class="heart-q" id="heartQ"></p>
+          <div class="heart-scale" id="heartScale" role="radiogroup"></div>
+          <p class="heart-say" id="heartSay" hidden></p>
+          <button type="button" class="toggle" id="heartDiary" hidden></button>
+        </div>
+      </section>
+
+      <section class="card reward" id="reward" aria-live="polite">
+        <h2 id="rewardTitle"></h2>
+        <p class="reward-lede" id="rewardLede"></p>
+        <div class="reward-bar" id="rewardBar"><span></span></div>
+        <div class="reward-stats"><span id="rewardMeter"></span><span class="tas" id="rewardTasmee"></span></div>
+        <p class="reward-chosen" id="rewardChosen"></p>
+        <p class="reward-thanks" id="rewardThanks" hidden></p>
+        <button type="button" class="toggle save" id="rewardCardBtn" hidden></button>
+        <details class="reward-pick" id="rewardPick">
+          <summary class="reward-label" id="rewardIdeasLabel"></summary>
+          <div class="ideas" id="rewardIdeas"></div>
+          <input type="text" id="rewardCustom" class="reward-custom" maxlength="80">
+        </details>
+        <div class="reward-big" id="rewardBigWrap">
+          <p class="reward-hizb" id="rewardHizb"></p>
+          <details id="rewardBigPick">
+            <summary class="reward-label" id="rewardBigLabel"></summary>
+            <div class="ideas" id="rewardBig"></div>
+          </details>
+        </div>
+      </section>
+
+      <section class="card diary" id="diary">
+        <div class="qh"><h2 id="diaryTitle"></h2><span class="count" id="diaryCount"></span></div>
+        <p class="hint" id="diaryLede"></p>
+        <form class="diary-form" id="diaryForm" autocomplete="off">
+          <div class="diary-row">
+            <select id="dSurah" aria-label="Sūrah"></select>
+            <input type="text" id="dOther" maxlength="40" hidden>
+            <label for="dAyah" id="dAyahLbl"></label><input type="number" id="dAyah" min="1" max="286" inputmode="numeric">
+          </div>
+          <textarea id="dNote" rows="3" maxlength="600"></textarea>
+          <button type="submit" class="toggle save" id="dSave"></button>
+        </form>
+        <ol class="diary-list" id="diaryList"></ol>
+      </section>
+
+      <section class="card">
+        <h2 data-t="glance"></h2>
+        <div class="tablewrap"><table id="glance"></table></div>
+      </section>
+
+      <section class="card keep" id="keep">
+        <h2 id="keepTitle"></h2>
+        <p class="hint" id="keepLede"></p>
+        <img id="cardPreview" class="card-preview" alt="" width="1080" height="1350">
+        <div class="keep-actions">
+          <button type="button" class="toggle save" id="saveCardBtn"></button>
+          <button type="button" class="toggle" id="saveBackupBtn"></button>
+          <label class="toggle" for="restoreFile" id="restoreLbl" tabindex="0"></label>
+          <input type="file" id="restoreFile" accept=".json,application/json" class="visually-hidden">
+        </div>
+        <div class="restore-confirm" id="restoreConfirm" hidden>
+          <p id="restoreQ"></p>
+          <div class="keep-actions"><button type="button" class="toggle save" id="restoreYes"></button><button type="button" class="toggle" id="restoreNo"></button></div>
+        </div>
+        <p class="keep-status" id="keepStatus" role="status"></p>
+        <h3 class="past-h" id="pastTitle"></h3>
+        <ol class="past" id="pastList"></ol>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="card">
+        <h2 data-t="quarters"></h2>
+        <div class="q">
+          <div class="qh"><strong data-t="newQ"></strong><span data-t="newQwhen"></span></div>
+          <div class="range">
+            <span data-t="imran"></span>
+            <label for="from" data-t="fromAyah"></label><input type="number" id="from" min="1" max="200" inputmode="numeric">
+            <label for="to" data-t="toAyah"></label><input type="number" id="to" min="1" max="200" inputmode="numeric">
+          </div>
+          <div class="size">
+            <span class="size-lbl" data-t="sizeLabel"></span>
+            <div class="seg" role="group"><button type="button" class="segb" id="sizeNormal" data-t="sizeNormal"></button><button type="button" class="segb" id="sizeHeavy" data-t="sizeHeavy"></button></div>
+          </div>
+          <p class="hint warn" id="heavyHint" hidden></p>
+          <div class="heavy" id="heavyBox" hidden>
+            <div class="seg" role="group"><button type="button" class="segb" id="hw1" data-t="week1"></button><button type="button" class="segb" id="hw2" data-t="week2"></button></div>
+            <div class="splits"><label for="h1" data-t="h1ends"></label><input type="number" id="h1" min="1" max="200" inputmode="numeric"></div>
+            <p class="hint" data-t="heavyNote"></p>
+          </div>
+          <div class="parts" id="parts"></div>
+          <div class="splits" id="splits">
+            <label for="s1" data-t="p1ends"></label><input type="number" id="s1" min="1" max="200" inputmode="numeric">
+            <label for="s2" data-t="p2ends"></label><input type="number" id="s2" min="1" max="200" inputmode="numeric">
+          </div>
+          <p class="hint" data-t="splitHint"></p>
+        </div>
+        <div class="q">
+          <div class="qh"><strong data-t="recentQ"></strong><span data-t="recentWhen"></span></div>
+          <div class="range">
+            <span data-t="imran"></span>
+            <label for="rFrom" data-t="fromAyah"></label><input type="number" id="rFrom" min="1" max="200" inputmode="numeric">
+            <label for="rTo" data-t="toAyah"></label><input type="number" id="rTo" min="1" max="200" inputmode="numeric">
+          </div>
+          <p class="hint" data-t="recentHint"></p>
+        </div>
+        <div class="q" id="revs">
+          <div class="qh"><strong data-t="reviewQ"></strong><span data-t="reviewWhen"></span></div>
+        </div>
+      </section>
+
+      <section class="card" id="sheikhs">
+        <h2 id="shTitle"></h2>
+        <p class="hint sh-lede" id="shLede"></p>
+        <ul class="sheikh-list" id="shList"></ul>
+        <p class="hint" id="shLinks"></p>
+        <div class="teacher">
+          <label for="teacher" id="teacherLbl"></label>
+          <input type="text" id="teacher" maxlength="60">
+          <p class="hint" id="teacherNote"></p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 data-t="method"></h2>
+        <ol class="steps" id="steps"></ol>
+      </section>
+
+      <section class="card">
+        <h2 data-t="life"></h2>
+        <ul class="rules" id="rules"></ul>
+      </section>
+    </div>
+  </div>
+  <p class="foot" data-t="foot"></p>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s) => document.querySelector(s);
+const KEY = 'rub-by-rub.v1';
+
+// ---------------------------------------------------------------- strings
+const T = {
+  en: {
+    title: 'Quarter by Quarter',
+    lede: 'One new quarter of Āl ʿImrān every week, and four quarters of Al-Baqarah and Āl ʿImrān kept strong. Three one-hour mornings, three light days, and Sunday for tasmeeʿ.',
+    langBtn: 'عربي',
+    howTitle: 'How this plan works',
+    how: [
+      'The new quarter is split into <b>three thirds</b>. You memorize one third on Monday, one on Tuesday and one on Wednesday.',
+      'Every session <b>starts with the new</b> while your mind is fresh. Then you review <b>one</b> old quarter, then a short recap.',
+      'Review is <b>one quarter a day only</b>. All four come together on Sunday, before tasmeeʿ.',
+      'Thursday, Friday and Saturday are <b>light</b>: 15–20 minutes, or just listening.',
+    ],
+    days: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+    short: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    sunTag: 'Tasmeeʿ',
+    imran: 'Āl ʿImrān', fromAyah: 'from ayah', toAyah: 'to ayah',
+    confirm: 'Start this week', later: 'Not now',
+    startAt: 'Session starts', busyOff: 'Busy day? 15-minute version', busyOn: 'Busy-day version on',
+    metaSession: (a,b) => `1-hour session · ${a}–${b}`,
+    metaBusy: (a,b) => `Busy-day version · ${a}–${b}`,
+    metaLight: 'Light day · 15–20 minutes, or just listening',
+    metaSun: 'Tasmeeʿ day · 12:00 pm – 6:00 pm',
+    done: (a,b) => `${a} of ${b} done`,
+    doneMsg: ['Done for today. May Allah accept it.', 'This day is complete. May Allah accept it.'],
+    types: {new:'New', recent:'Recent', review:'Review', listen:'Listen', rest:'Break', tasmee:'Tasmeeʿ', close:'Recap', tip:'Bonus', light:'Light'},
+    or: 'or',
+    partN: ['First third', 'Second third', 'Last third'],
+    newQuarter: 'This week’s quarter',
+    reviewDefault: ['Al-Baqarah · quarter 1','Al-Baqarah · quarter 2','Āl ʿImrān · quarter 1','Āl ʿImrān · quarter 2'],
+    quarters: 'Your quarters',
+    newQ: 'New this week', newQwhen: 'one third Mon, Tue, Wed', newQwhenHeavy: 'over two weeks',
+    sizeLabel: 'Quarter size', sizeNormal: 'Normal · 1 week', sizeHeavy: 'Long / heavy · 2 weeks',
+    week1: 'Week 1 · first half', week2: 'Week 2 · second half', h1ends: 'First half ends at ayah',
+    heavyNote: 'The quarter is spread over two weeks, so each day stays the same size. Week 1 memorizes the first half. Week 2 memorizes the second half, and that Sunday’s tasmeeʿ is the whole quarter.',
+    heavyHint: (n) => `This quarter has only ${n} verses, so its verses are long. If it feels heavy, choose “Long / heavy” to spread it over two weeks.`,
+    heavyTag: (w) => `Long quarter · week ${w} of 2`,
+    portionN: ['Monday’s portion', 'Tuesday’s portion', 'Wednesday’s portion'],
+    howHeavy: (w, r) => `<b>Long quarter, week ${w} of 2.</b> This week covers the ${w === 1 ? 'first' : 'second'} half${r ? ` (${r})` : ''}, split into three daily portions for Monday, Tuesday and Wednesday.`,
+    gNewH: (w) => ['Portion 1', 'Portion 2, then 1 + 2 together', w === 1 ? 'Portion 3, then the whole half' : 'Portion 3, then the whole quarter', 'Light or listen', 'Light or listen', w === 1 ? 'Whole half ×2' : 'Whole quarter ×2', w === 1 ? '3 clean · tasmeeʿ of the half' : '3 clean · tasmeeʿ of the quarter'],
+    bannerHalf: (r) => `A new week: time for the second half of this long quarter (${r}).`,
+    startHalf2: 'Start the second half', repeatHalf1: 'Repeat the first half',
+    p1endsH: 'Monday’s portion ends at ayah', p2endsH: 'Tuesday’s portion ends at ayah',
+    splitHintH: 'This week’s half is split into three daily portions. If a portion ends in the middle of a meaning, move it to the nearest natural stop.',
+    p1ends: 'First third ends at ayah', p2ends: 'Second third ends at ayah',
+    splitHint: 'The page splits the quarter into three roughly equal thirds. If a third ends in the middle of a meaning, move it to the nearest natural stop.',
+    recentQ: 'Recent', recentWhen: 'in each recap',
+    recentHint: 'Last week’s quarter. It gets a quick recitation every session for one week, until it settles.',
+    reviewQ: 'Review quarters', reviewWhen: 'tap a name to change it',
+    revWhen: ['Mon · listen Fri · Sun','Tue · Sun','Wed · Sun','listen Thu & Sat · Sun'],
+    method: 'How to memorize one third',
+    steps: [
+      ['Listen first.', 'Play the third twice from a teaching reciter (al-Ḥuṣarī’s muʿallim recording is ideal) while following in your mushaf.'],
+      ['Read it 5 times from the mushaf.', 'Slowly, with correct tajwīd. You are learning the sound and the look of the page.'],
+      ['Then ayah by ayah.', 'Read the ayah 3 times, then say it 3 times without looking. Before moving on, recite it together with all the ayat before it, without stopping.'],
+      ['Done when it’s clean.', 'The third is memorized when you can recite it 3 times in a row without a mistake.'],
+      ['Once before sleep.', 'Sleep fixes what you practised last. One quiet recitation in bed is worth more than ten in the afternoon.'],
+    ],
+    stepTips: 'Use one mushaf only, so the page layout becomes part of the memory. Always try from memory before you look: testing yourself works better than rereading.',
+    life: 'When life happens',
+    rules: [
+      ['Busy morning?', 'On Monday to Wednesday, tap “Busy day” for the 15-minute version: today’s new third only, plus the review quarter on audio.'],
+      ['Missed a whole day?', 'Next session, memorize both thirds (about 40 minutes) and skip that day’s review. Never let the new memorization slip two days in a row.'],
+      ['Nothing at all on a light day?', 'Listening still counts. Put the new quarter on repeat in the car.'],
+      ['The week fell apart?', 'Sunday is the safety net: 3:30–4:15 is set aside for repairs. If the quarter still isn’t ready, recite the part that is solid and carry the rest one week. Steady beats fast.'],
+    ],
+    prioLabel: 'When time is short, protect in this order:',
+    glance: 'The week at a glance',
+    rowNew: 'New', rowRecent: 'Recap', rowReview: 'Review', rowListen: 'Listen',
+    gNew: ['Third 1', 'Third 2, then 1 + 2 together', 'Third 3, then the whole quarter', 'Light or listen', 'Light or listen', 'Whole quarter ×2', '3 clean · tasmeeʿ'],
+    gRecent: ['10 min', '10 min', '10 min', '—', '—', 'Once', 'Fix mistakes'],
+    gAll: 'All 4',
+    gListen: (q1, q4) => ['—', '—', '—', `New ×3 · ${q4}`, `New ×2 · ${q1}`, `or new ×3 · ${q4}`, '—'],
+    bannerText: (r) => `A new week has started. Last week’s quarter (${r}) moves to Recent. Which ayat are you memorizing this week?`,
+    foot: 'Progress is saved in this browser on this device. A quarter is about 2½ mushaf pages; if one feels too heavy, give it two weeks.',
+    b: {
+      new: [
+        ['Memorize the first third', 'Listen to it twice → read it 5 times from the mushaf → then ayah by ayah: read it 3 times, say it 3 times without looking. Finished when you can recite the whole third 3 times without a mistake.'],
+        ['Memorize the second third', 'The same way as Monday. Then recite the first and second thirds together, without stopping, twice.'],
+        ['Memorize the last third', 'The same way. Then recite the whole quarter from beginning to end, twice, without looking.'],
+      ],
+      newH: [
+        ['Memorize Monday’s portion', 'Listen to it twice → read it 5 times from the mushaf → then ayah by ayah: read it 3 times, say it 3 times without looking. Finished when you can recite the whole portion 3 times without a mistake.'],
+        ['Memorize Tuesday’s portion', 'The same way as Monday. Then recite Monday’s and Tuesday’s portions together, without stopping, twice.'],
+        ['Memorize Wednesday’s portion', (w) => (w === 1 ? 'The same way. Then recite this week’s whole half from beginning to end, twice, without looking.' : 'The same way. Then recite the whole quarter, both halves, from beginning to end, twice, without looking.')],
+      ],
+      sunNewHalf: ['This week’s half · 3 clean in a row', 'Recite it until you get three complete recitations in a row with no mistake. A mistake starts the count again.'],
+      review: ['Review one old quarter', 'Only this one quarter today. Recite it from memory first, then check with the mushaf. Mark each mistake lightly in pencil and repeat that spot 3 times.'],
+      recap: ['Short recap', 'Last week’s quarter once from memory, then today’s third once more. And today’s third once more before sleep.'],
+      recapNoRecent: ['Short recap', 'Today’s third once more from memory. And once more before sleep.'],
+      thuLight: ['Light session · 15 min, any time', 'Recite the whole new quarter once from memory. Open the mushaf only where you get stuck.'],
+      thuListen: ['Listen only', (r) => `Play the new quarter 3 times (about 15 minutes) and ${r} once, in the car or while getting ready.`],
+      thuTip: ['', 'Recite part of the new quarter in your prayers today.'],
+      friLight: ['Light session · 15 min', (r) => `Recite the new quarter once, then ${r} once.`],
+      friListen: ['Listen only', (r) => `The new quarter twice and ${r} once.`],
+      friTip: ['', 'Verses recited in sunnah or night prayer are among the hardest to forget.'],
+      satLight: ['Light session · 20 min', 'Recite the whole new quarter twice from memory, then last week’s quarter once. This is the last practice before tomorrow’s tasmeeʿ.'],
+      satListen: ['Listen only', (r) => `The new quarter 3 times and ${r} once.`],
+      satTip: ['', 'Tonight, listen to the new quarter once while following in the mushaf.'],
+      busyNew: ['15-minute version · today’s new third', 'At least the first half of today’s third, the same way. The rest moves to the next day.'],
+      busyListen: ['Review on audio', (r) => `Listen to ${r} once on the go. Its full review waits for Sunday.`],
+      sunNew: ['New quarter · 3 clean in a row', 'Recite it until you get three complete recitations in a row with no mistake. A mistake starts the count again.'],
+      sunBreak1: ['Break & prayer', 'Eat something light. Step away from the mushaf.'],
+      sunReview: ['Review all four quarters', (l) => `About 20 minutes each, from memory, marking every mistake: ${l}.`],
+      sunBreak2: ['Lunch, rest, ʿAṣr', 'A real break. Memory settles while you rest.'],
+      sunFix: ['Fix the marked mistakes', 'Every pencil mark from this week and today, plus last week’s quarter once.'],
+      sunRehearse: ['Practice tasmeeʿ', 'Recite the new quarter as if your teacher were listening, and record it. Play it back with the mushaf open.'],
+      sunCalm: ['Rest, no cramming', 'Light listening and duʿāʾ. A calm mind recites better than a tired one.'],
+      sunTasmee: ['Tasmeeʿ', 'Recite to your teacher. Afterwards, note which spots to watch next week.'],
+    },
+  },
+  ar: {
+    title: 'ربعًا ربعًا',
+    lede: 'ربع جديد من آل عمران كل أسبوع، مع تثبيت أربعة أرباع من البقرة وآل عمران: ثلاث جلسات صباحية مدة كل منها ساعة، وثلاثة أيام خفيفة، والأحد للتسميع.',
+    langBtn: 'English',
+    howTitle: 'كيف يعمل الجدول',
+    how: [
+      'الربع الجديد يُقسَّم إلى <b>ثلاثة أثلاث</b>: ثلث يُحفظ يوم الاثنين، وثلث يوم الثلاثاء، وثلث يوم الأربعاء.',
+      'كل جلسة <b>تبدأ بالحفظ الجديد</b> والذهن صافٍ، ثم مراجعة <b>ربع واحد</b> قديم، ثم تسميع سريع في الختام.',
+      'المراجعة <b>ربع واحد فقط في اليوم</b>، والأرباع الأربعة معًا يوم الأحد قبل التسميع.',
+      'الخميس والجمعة والسبت <b>أيام خفيفة</b>: ربع ساعة تقريبًا، أو استماع فقط.',
+    ],
+    days: ['الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت','الأحد'],
+    short: ['اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت','أحد'],
+    sunTag: 'تسميع',
+    imran: 'آل عمران', fromAyah: 'من الآية', toAyah: 'إلى الآية',
+    confirm: 'ابدأ هذا الأسبوع', later: 'ليس الآن',
+    startAt: 'بداية الجلسة', busyOff: 'يوم مزدحم؟ نسخة الربع ساعة', busyOn: 'نسخة اليوم المزدحم مفعّلة',
+    metaSession: (a,b) => `جلسة ساعة — ${a} – ${b}`,
+    metaBusy: (a,b) => `نسخة اليوم المزدحم — ${a} – ${b}`,
+    metaLight: 'يوم خفيف — ربع ساعة تقريبًا، أو استماع فقط',
+    metaSun: 'يوم التسميع — ١٢:٠٠ ظهرًا – ٦:٠٠ مساءً',
+    done: (a,b) => `تم ${a} من ${b}`,
+    doneMsg: ['اكتمل ورد اليوم. تقبّل الله.', 'اكتمل هذا اليوم. تقبّل الله.'],
+    types: {new:'جديد', recent:'قريب', review:'مراجعة', listen:'استماع', rest:'استراحة', tasmee:'تسميع', close:'ختام', tip:'إضافة', light:'خفيف'},
+    or: 'أو',
+    partN: ['الثلث الأول', 'الثلث الثاني', 'الثلث الأخير'],
+    newQuarter: 'ربع هذا الأسبوع',
+    reviewDefault: ['البقرة — الربع الأول','البقرة — الربع الثاني','آل عمران — الربع الأول','آل عمران — الربع الثاني'],
+    quarters: 'الأرباع',
+    newQ: 'الجديد هذا الأسبوع', newQwhen: 'ثلث كل يوم: اثنين، ثلاثاء، أربعاء', newQwhenHeavy: 'على أسبوعين',
+    sizeLabel: 'حجم الربع', sizeNormal: 'عادي — أسبوع', sizeHeavy: 'طويل أو ثقيل — أسبوعان',
+    week1: 'الأسبوع ١ — النصف الأول', week2: 'الأسبوع ٢ — النصف الثاني', h1ends: 'نهاية النصف الأول: آية',
+    heavyNote: 'يتوزع الربع على أسبوعين فيبقى ورد كل يوم بنفس الحجم: الأسبوع الأول للنصف الأول، والثاني للنصف الثاني، وتسميع أحده للربع كاملًا.',
+    heavyHint: (n) => `هذا الربع ${n} آيات فقط، أي أن آياته طويلة. إن ثقل، اختر «طويل أو ثقيل» ليتوزع على أسبوعين.`,
+    heavyTag: (w) => `ربع طويل — الأسبوع ${w === 1 ? '١' : '٢'} من ٢`,
+    portionN: ['ورد الاثنين', 'ورد الثلاثاء', 'ورد الأربعاء'],
+    howHeavy: (w, r) => `<b>ربع طويل، الأسبوع ${w === 1 ? 'الأول' : 'الثاني'} من اثنين.</b> هذا الأسبوع ${w === 1 ? 'للنصف الأول' : 'للنصف الثاني'}${r ? ` (${r})` : ''}، مقسَّمًا إلى ثلاثة أوراد: الاثنين والثلاثاء والأربعاء.`,
+    gNewH: (w) => ['الورد ١', 'الورد ٢، ثم ١ و٢ معًا', w === 1 ? 'الورد ٣، ثم النصف كاملًا' : 'الورد ٣، ثم الربع كاملًا', 'خفيف أو استماع', 'خفيف أو استماع', w === 1 ? 'النصف كاملًا مرتين' : 'الربع كاملًا مرتين', w === 1 ? '٣ صحيحة — تسميع النصف' : '٣ صحيحة — تسميع الربع'],
+    bannerHalf: (r) => `أسبوع جديد: حان وقت النصف الثاني من هذا الربع الطويل (${r}).`,
+    startHalf2: 'ابدأ النصف الثاني', repeatHalf1: 'إعادة النصف الأول',
+    p1endsH: 'نهاية ورد الاثنين: آية', p2endsH: 'نهاية ورد الثلاثاء: آية',
+    splitHintH: 'نصف هذا الأسبوع مقسَّم إلى ثلاثة أوراد يومية. وإن انتهى ورد في وسط معنى، يُنقل إلى أقرب وقف.',
+    p1ends: 'نهاية الثلث الأول: آية', p2ends: 'نهاية الثلث الثاني: آية',
+    splitHint: 'الصفحة تقسم الربع إلى ثلاثة أثلاث متقاربة. وإن انتهى ثلث في وسط معنى، يُنقل إلى أقرب وقف.',
+    recentQ: 'القريب', recentWhen: 'في ختام كل جلسة',
+    recentHint: 'ربع الأسبوع الماضي. يُسمَّع مرة في كل جلسة لمدة أسبوع حتى يثبت.',
+    reviewQ: 'أرباع المراجعة', reviewWhen: 'اضغط على الاسم لتغييره',
+    revWhen: ['الاثنين — استماع الجمعة — الأحد','الثلاثاء — الأحد','الأربعاء — الأحد','استماع الخميس والسبت — الأحد'],
+    method: 'طريقة حفظ الثلث',
+    steps: [
+      ['الاستماع أولًا.', 'تشغيل الثلث مرتين بصوت قارئ معلّم (مصحف الحصري المعلّم مثالي) مع متابعة المصحف.'],
+      ['القراءة من المصحف ٥ مرات.', 'بتأنٍّ وبتجويد صحيح؛ هنا يُحفظ صوت الآيات وشكل الصفحة.'],
+      ['ثم آية آية.', 'قراءة الآية ٣ مرات، ثم تسميعها ٣ مرات دون نظر. وقبل الانتقال للآية التالية: تسميعها متصلة بكل ما قبلها دون توقف.'],
+      ['ينتهي الحفظ عند الإتقان.', 'يُعدّ الثلث محفوظًا عند تسميعه ٣ مرات متتالية بلا خطأ.'],
+      ['مرة قبل النوم.', 'النوم يثبّت آخر ما تمت مراجعته؛ تسميعة هادئة قبل النوم أنفع من عشر بعد الظهر.'],
+    ],
+    stepTips: 'الالتزام بمصحف واحد حتى يصير شكل الصفحة جزءًا من الحفظ. والتسميع دائمًا قبل النظر؛ اختبار النفس أنفع من إعادة القراءة.',
+    life: 'عند الظروف',
+    rules: [
+      ['صباح مزدحم؟', 'من الاثنين إلى الأربعاء: زر «يوم مزدحم» يعرض نسخة الربع ساعة: ثلث اليوم الجديد فقط، مع الاستماع لربع المراجعة.'],
+      ['فات يوم كامل؟', 'في الجلسة التالية: حفظ الثلثين معًا (نحو ٤٠ دقيقة) وترك مراجعة ذلك اليوم. ولا يُترك الحفظ الجديد يومين متتاليين.'],
+      ['لا وقت إطلاقًا في يوم خفيف؟', 'الاستماع يُحسب. تشغيل الربع الجديد بالتكرار في السيارة.'],
+      ['اختلّ الأسبوع كله؟', 'الأحد هو الاحتياطي: من ٣:٣٠ إلى ٤:١٥ للإصلاح. وإن لم يكتمل الربع، يُسمَّع المتقن منه ويُؤجَّل الباقي أسبوعًا؛ قليل دائم خير من كثير منقطع.'],
+    ],
+    prioLabel: 'عند ضيق الوقت، الأولوية بهذا الترتيب:',
+    glance: 'الأسبوع في لمحة',
+    rowNew: 'الجديد', rowRecent: 'الختام', rowReview: 'المراجعة', rowListen: 'الاستماع',
+    gNew: ['الثلث ١', 'الثلث ٢، ثم الأول والثاني معًا', 'الثلث ٣، ثم الربع كاملًا', 'خفيف أو استماع', 'خفيف أو استماع', 'الربع كاملًا مرتين', '٣ صحيحة — تسميع'],
+    gRecent: ['١٠ دقائق', '١٠ دقائق', '١٠ دقائق', '—', '—', 'مرة', 'إصلاح الأخطاء'],
+    gAll: 'الأربعة',
+    gListen: (q1, q4) => ['—', '—', '—', `الجديد ×٣ — ${q4}`, `الجديد ×٢ — ${q1}`, `أو الجديد ×٣ — ${q4}`, '—'],
+    bannerText: (r) => `بدأ أسبوع جديد. ربع الأسبوع الماضي (${r}) ينتقل إلى القريب. ما آيات هذا الأسبوع؟`,
+    foot: 'يُحفظ التقدم في هذا المتصفح على هذا الجهاز. الربع نحو صفحتين ونصف من المصحف؛ وإن ثقل ربعٌ فلا بأس بأسبوعين.',
+    b: {
+      new: [
+        ['حفظ الثلث الأول', 'الاستماع إليه مرتين ← قراءته من المصحف ٥ مرات ← ثم آية آية: قراءتها ٣ مرات وتسميعها ٣ مرات دون نظر. ينتهي الحفظ عند تسميع الثلث كاملًا ٣ مرات بلا خطأ.'],
+        ['حفظ الثلث الثاني', 'بنفس طريقة الاثنين، ثم تسميع الثلث الأول والثاني معًا متصلين مرتين.'],
+        ['حفظ الثلث الأخير', 'بنفس الطريقة، ثم تسميع الربع كاملًا من أوله لآخره مرتين دون نظر.'],
+      ],
+      newH: [
+        ['حفظ ورد الاثنين', 'الاستماع إليه مرتين ← قراءته من المصحف ٥ مرات ← ثم آية آية: قراءتها ٣ مرات وتسميعها ٣ مرات دون نظر. ينتهي الحفظ عند تسميع الورد كاملًا ٣ مرات بلا خطأ.'],
+        ['حفظ ورد الثلاثاء', 'بنفس طريقة الاثنين، ثم تسميع وردَي الاثنين والثلاثاء معًا متصلين مرتين.'],
+        ['حفظ ورد الأربعاء', (w) => (w === 1 ? 'بنفس الطريقة، ثم تسميع نصف هذا الأسبوع كاملًا من أوله لآخره مرتين دون نظر.' : 'بنفس الطريقة، ثم تسميع الربع كاملًا بنصفيه من أوله لآخره مرتين دون نظر.')],
+      ],
+      sunNewHalf: ['نصف هذا الأسبوع — ثلاث تسميعات صحيحة متتالية', 'التسميع حتى ثلاث مرات كاملة بلا خطأ على التوالي؛ وأي خطأ يعيد العدّ.'],
+      review: ['مراجعة ربع واحد قديم', 'هذا الربع فقط اليوم. تسميعه غيبًا أولًا ثم المقارنة بالمصحف، مع علامة خفيفة بالقلم الرصاص عند كل خطأ وتكرار موضعه ٣ مرات.'],
+      recap: ['ختام قصير', 'ربع الأسبوع الماضي مرة غيبًا، ثم ثلث اليوم مرة أخرى. وثلث اليوم مرة قبل النوم.'],
+      recapNoRecent: ['ختام قصير', 'ثلث اليوم مرة أخرى غيبًا، ومرة قبل النوم.'],
+      thuLight: ['جلسة خفيفة — ربع ساعة في أي وقت', 'تسميع الربع الجديد كاملًا مرة غيبًا، وفتح المصحف عند مواضع التوقف فقط.'],
+      thuListen: ['الاستماع فقط', (r) => `تشغيل الربع الجديد ٣ مرات (نحو ربع ساعة) و«${r}» مرة، في الطريق أو أثناء الاستعداد.`],
+      thuTip: ['', 'قراءة جزء من الربع الجديد في الصلاة اليوم.'],
+      friLight: ['جلسة خفيفة — ربع ساعة', (r) => `تسميع الربع الجديد مرة، ثم «${r}» مرة.`],
+      friListen: ['الاستماع فقط', (r) => `الربع الجديد مرتين و«${r}» مرة.`],
+      friTip: ['', 'الآيات التي تُقرأ في السنن وقيام الليل من أبعد الآيات عن النسيان.'],
+      satLight: ['جلسة خفيفة — ٢٠ دقيقة', 'تسميع الربع الجديد كاملًا مرتين غيبًا، ثم ربع الأسبوع الماضي مرة. هذا آخر تثبيت قبل تسميع الغد.'],
+      satListen: ['الاستماع فقط', (r) => `الربع الجديد ٣ مرات و«${r}» مرة.`],
+      satTip: ['', 'الليلة: الاستماع إلى الربع الجديد مرة مع متابعة المصحف.'],
+      busyNew: ['نسخة الربع ساعة — ثلث اليوم الجديد', 'النصف الأول من ثلث اليوم على الأقل، بالطريقة نفسها. والباقي في اليوم التالي.'],
+      busyListen: ['المراجعة سماعًا', (r) => `الاستماع إلى «${r}» مرة في الطريق. والمراجعة الكاملة يوم الأحد.`],
+      sunNew: ['الجديد — ثلاث تسميعات صحيحة متتالية', 'التسميع حتى ثلاث مرات كاملة بلا خطأ على التوالي؛ وأي خطأ يعيد العدّ.'],
+      sunBreak1: ['استراحة وصلاة', 'طعام خفيف وابتعاد قليل عن المصحف.'],
+      sunReview: ['مراجعة الأرباع الأربعة', (l) => `نحو ٢٠ دقيقة لكل ربع، غيبًا، مع تعليم كل خطأ: ${l}.`],
+      sunBreak2: ['غداء وراحة وصلاة العصر', 'راحة حقيقية؛ الحفظ يستقر أثناء الراحة.'],
+      sunFix: ['إصلاح الأخطاء المعلَّمة', 'كل علامات الأسبوع واليوم، مع تسميع ربع الأسبوع الماضي مرة.'],
+      sunRehearse: ['تجربة التسميع', 'تسميع الربع الجديد كأن الشيخ يسمع، مع التسجيل، ثم سماعه والمصحف مفتوح.'],
+      sunCalm: ['راحة بلا حشو', 'استماع خفيف ودعاء؛ الذهن الهادئ يسمّع أفضل من المرهَق.'],
+      sunTasmee: ['التسميع', 'التسميع على الشيخ، ثم تدوين المواضع التي تحتاج انتباهًا الأسبوع القادم.'],
+    },
+  },
+};
+
+// ---------------------------------------------------------------- state
+const defaults = { name: '', history: [], partPick: {}, size: 'normal', hw: 1, winW: {}, wins: [], reward: {}, lang: 'en', start: 630, range: { from: '', to: '', s1: '', s2: '' }, recent: { from: '', to: '' }, reviews: ['', '', '', ''], weekKey: null, busy: {}, progress: {} };
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && typeof s === 'object') return { ...defaults, ...s }; } catch (e) { /* storage unavailable */ }
+  return { ...defaults };
+}
+const S = load();
+// save(): every real change stamps _t; save(false) only writes locally (startup housekeeping, applying cloud data)
+const save = (bump = true) => {
+  if (bump === true) S._t = Date.now();
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* storage unavailable */ }
+  try { if (bump === true && window.QBQ && window.QBQ.onSave) window.QBQ.onSave(S); } catch (e) { /* cloud hook */ }
+};
+// bridge for the cloud-sync module below
+window.QBQ = {
+  get: () => S,
+  apply(obj) {
+    for (const k of Object.keys(S)) delete S[k];
+    Object.assign(S, JSON.parse(JSON.stringify(defaults)), obj);
+    archiveOldWeeks(); save(false); renderStatic(); renderDynamic();
+  },
+  onSave: null,
+};
+
+const pad = (n) => String(n).padStart(2, '0');
+const isoDate = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const now = new Date();
+const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - ((now.getDay() + 6) % 7));
+const WEEK = isoDate(monday);
+const TODAY = (now.getDay() + 6) % 7; // Monday = 0 … Sunday = 6
+let sel = TODAY;
+let bannerDismissed = false;
+
+const L = () => T[S.lang];
+const nf = () => new Intl.NumberFormat(S.lang === 'ar' ? 'ar-EG' : 'en-US', { useGrouping: false });
+const num = (n) => nf().format(n);
+const num2 = (n) => (S.lang === 'ar' ? nf().format(0) : '0').repeat(n < 10 ? 1 : 0) + num(n);
+function clock(m) {
+  const h = Math.floor(m / 60), mm = m % 60, h12 = h % 12 || 12;
+  const s = `${num(h12)}:${num2(mm)}`;
+  return S.lang === 'ar' ? `${s} ${h >= 12 ? 'م' : 'ص'}` : `${s} ${h >= 12 ? 'pm' : 'am'}`;
+}
+// compact form for the agenda column: the day header already says morning or afternoon
+function clockS(m) { const h = Math.floor(m / 60); return `${num(h % 12 || 12)}:${num2(m % 60)}`; }
+
+const valid = (f, t) => Number.isInteger(f) && Number.isInteger(t) && f >= 1 && t >= f && t <= 200;
+function quarter() { const f = parseInt(S.range.from, 10), t = parseInt(S.range.to, 10); return valid(f, t) ? [f, t] : null; }
+function recentQ() { const f = parseInt(S.recent.from, 10), t = parseInt(S.recent.to, 10); return valid(f, t) ? [f, t] : null; }
+function autoSplits(f, t) {
+  const n = t - f + 1;
+  return [f + Math.max(1, Math.round(n / 3)) - 1, f + Math.max(2, Math.round((2 * n) / 3)) - 1];
+}
+const heavy = () => S.size === 'heavy';
+const hw = () => (S.hw === 2 ? 2 : 1);
+function halfEnd(f, t) {
+  let m = f + Math.ceil((t - f + 1) / 2) - 1;
+  const h = parseInt(S.range.h1, 10);
+  if (h >= f + 2 && h <= t - 3) m = h;
+  return m;
+}
+// the ayat being memorized this week: the whole quarter, or one half of a long one
+function active() {
+  const q = quarter();
+  if (!q || !heavy() || q[1] - q[0] < 5) return q;
+  const m = halfEnd(q[0], q[1]);
+  return hw() === 2 ? [m + 1, q[1]] : [q[0], m];
+}
+function parts() {
+  const q = active();
+  if (!q) return null;
+  const [f, t] = q;
+  if (t - f < 2) return null;
+  let [a, b] = autoSplits(f, t);
+  const s1 = parseInt(S.range.s1, 10), s2 = parseInt(S.range.s2, 10);
+  if (s1 >= f && s1 < t - 1) a = s1;
+  if (s2 > a && s2 < t) b = s2;
+  if (b <= a) b = Math.min(a + 1, t - 1);
+  return [[f, a], [a + 1, b], [b + 1, t]];
+}
+const SEP = () => (S.lang === 'ar' ? ' — ' : ' · '); // a middle dot beside Arabic digits reads like ٠
+const span = (r) => (r[0] === r[1] ? num(r[0]) : `${num(r[0])}–${num(r[1])}`);
+const rng = (r) => `${L().imran} ${span(r)}`;
+const revName = (i) => (S.reviews[i] || '').trim() || L().reviewDefault[i];
+
+// ---------------------------------------------------------------- the plan
+// Week runs Monday → Sunday so everything builds toward Sunday's tasmeeʿ.
+// Mon–Wed: one-hour sessions. Thu–Sat: light. Sun: preparation + tasmeeʿ.
+const SESSION_DAYS = [0, 1, 2];
+const REVIEW_OF_DAY = { 0: 0, 1: 1, 2: 2 };
+
+function isBusy(d) { return !!S.busy[`${WEEK}:${d}`]; }
+
+function blocks(d) {
+  const t = L(), B = t.b, p = parts(), q = quarter(), rq = recentQ();
+  const names = heavy() ? t.portionN : t.partN;
+  const partTxt = (i) => (p ? `${names[i]}${SEP()}${rng(p[i])}` : names[i]);
+  const half = heavy() && hw() === 1;              // week 1 of a long quarter: everything is about the first half
+  const a = active();
+  const qTxt = half ? (a ? rng(a) : t.newQuarter) : q ? rng(q) : t.newQuarter;
+  const halfify = (x) => (!half || typeof x !== 'string' ? x : S.lang === 'ar'
+    ? x.replace(/الربع الجديد/g, 'نصف هذا الأسبوع')
+    : x.replace(/the whole new quarter/g, 'all of this week’s half').replace(/the new quarter/g, 'this week’s half').replace(/The new quarter/g, 'This week’s half'));
+  const mk = (id, type, pair, extra = {}) => {
+    const [title, det] = pair;
+    const o = { id, type, title, det: halfify(typeof det === 'function' ? det(extra.arg) : det), ...extra };
+    if (type === 'listen' && !o.sub && S.reciter) o.sub = X().withReciter(reciterName());
+    return o;
+  };
+
+  if (SESSION_DAYS.includes(d)) {
+    const ri = REVIEW_OF_DAY[d];
+    if (isBusy(d)) return [
+      mk('busyNew', 'new', B.busyNew, { min: 10, sub: partTxt(pickedPart(d)) }),
+      mk('busyListen', 'listen', B.busyListen, { min: 5, arg: revName(ri) }),
+    ];
+    return [
+      mk('new', 'new', heavy() ? B.newH[pickedPart(d)] : B.new[pickedPart(d)], { min: 30, sub: partTxt(pickedPart(d)), arg: hw() }),
+      mk('review', 'review', B.review, { min: 20, sub: revName(ri) }),
+      rq ? mk('close', 'close', B.recap, { min: 10, sub: rng(rq) }) : mk('close', 'close', B.recapNoRecent, { min: 10 }),
+    ];
+  }
+  const ci = d >= 3 && d <= 5 ? catchPart(d) : undefined;
+  const catchItem = ci === undefined ? [] : [mk('catch' + ci, 'new', [KX().catchTitle(names[ci]), KX().catchDet], { group: 'opt', sub: partTxt(ci) })];
+  if (d === 3) return [...catchItem,
+    mk('light', 'light', B.thuLight, { group: 'opt', sub: qTxt }),
+    mk('listen', 'listen', B.thuListen, { group: 'opt', arg: revName(3) }),
+    mk('tip', 'tip', B.thuTip, { optional: true }),
+  ];
+  if (d === 4) return [...catchItem,
+    mk('light', 'light', B.friLight, { group: 'opt', sub: qTxt, arg: revName(0) }),
+    mk('listen', 'listen', B.friListen, { group: 'opt', arg: revName(0) }),
+    mk('tip', 'tip', B.friTip, { optional: true }),
+  ];
+  if (d === 5) return [...catchItem,
+    mk('light', 'light', B.satLight, { group: 'opt', sub: qTxt }),
+    mk('listen', 'listen', B.satListen, { group: 'opt', arg: revName(3) }),
+    mk('tip', 'tip', B.satTip, { optional: true }),
+  ];
+  // Sunday: 12:00–17:00 preparation, 17:00–18:00 tasmeeʿ
+  const all = [0, 1, 2, 3].map(revName).join(S.lang === 'ar' ? '، ' : ', ');
+  return [
+    mk('sunNew', 'new', half ? B.sunNewHalf : B.sunNew, { at: [720, 765], sub: qTxt }),
+    mk('sunBreak1', 'rest', B.sunBreak1, { at: [765, 795], optional: true }),
+    mk('sunReview', 'review', B.sunReview, { at: [795, 885], arg: all }),
+    mk('sunBreak2', 'rest', B.sunBreak2, { at: [885, 930], optional: true }),
+    mk('sunFix', 'recent', B.sunFix, { at: [930, 975] }),
+    mk('sunRehearse', 'new', B.sunRehearse, { at: [975, 1005], sub: qTxt }),
+    mk('sunCalm', 'rest', B.sunCalm, { at: [1005, 1020], optional: true }),
+    mk('sunTasmee', 'tasmee', B.sunTasmee, { at: [1020, 1080] }),
+    mk('duaTeacher', 'tip', [X().duaTitle, X().duaDet((S.teacher || '').trim())], { optional: true }),
+  ];
+}
+
+// ---------------------------------------------------------------- encouragement
+// Quran verses (with sūrah:āyah) and well-known authentic hadith. English is a translation of the meaning.
+// tags: new = Mon–Wed, light = Thu–Sat, sun = Sunday, any = every day
+const QUOTES = [
+  { k: 'q', tags: ['any', 'new'], ar: 'وَلَقَدْ يَسَّرْنَا الْقُرْآنَ لِلذِّكْرِ فَهَلْ مِن مُّدَّكِرٍ',
+    en: 'And We have certainly made the Quran easy to remember. So is there anyone who will take heed?', src: ['Al-Qamar 54:17', 'سورة القمر: ١٧'] },
+  { k: 'q', tags: ['new'], ar: 'بَلْ هُوَ آيَاتٌ بَيِّنَاتٌ فِي صُدُورِ الَّذِينَ أُوتُوا الْعِلْمَ',
+    en: 'Rather, it is clear verses kept in the hearts of those who have been given knowledge.', src: ['Al-ʿAnkabūt 29:49', 'سورة العنكبوت: ٤٩'] },
+  { k: 'q', tags: ['light'], ar: 'أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ',
+    en: 'Truly, in the remembrance of Allah do hearts find rest.', src: ['Ar-Raʿd 13:28', 'سورة الرعد: ٢٨'] },
+  { k: 'q', tags: ['any'], ar: 'إِنَّ الَّذِينَ يَتْلُونَ كِتَابَ اللَّهِ وَأَقَامُوا الصَّلَاةَ وَأَنفَقُوا مِمَّا رَزَقْنَاهُمْ سِرًّا وَعَلَانِيَةً يَرْجُونَ تِجَارَةً لَّن تَبُورَ',
+    en: 'Those who recite the Book of Allah, establish prayer, and spend from what We have provided them, secretly and openly, hope for a trade that will never fail.', src: ['Fāṭir 35:29', 'سورة فاطر: ٢٩'] },
+  { k: 'q', tags: ['new', 'sun'], ar: 'وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا',
+    en: 'And recite the Quran slowly and distinctly.', src: ['Al-Muzzammil 73:4', 'سورة المزمل: ٤'] },
+  { k: 'q', tags: ['any'], ar: 'رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِن لَّدُنكَ رَحْمَةً ۚ إِنَّكَ أَنتَ الْوَهَّابُ',
+    en: 'Our Lord, do not let our hearts swerve after You have guided us, and grant us mercy from Yourself. You are the Giver. (A duʿāʾ from the sūrah you are memorizing.)', src: ['Āl ʿImrān 3:8', 'سورة آل عمران: ٨'] },
+  { k: 'h', tags: ['any'], ar: 'خيرُكم مَن تعلَّم القرآنَ وعلَّمه',
+    en: 'The best of you are those who learn the Quran and teach it.', src: ['Al-Bukhārī', 'رواه البخاري'] },
+  { k: 'h', tags: ['any', 'sun'], ar: 'اقرؤوا القرآنَ، فإنه يأتي يومَ القيامة شفيعًا لأصحابه',
+    en: 'Recite the Quran, for it will come on the Day of Resurrection as an intercessor for its companions.', src: ['Muslim', 'رواه مسلم'] },
+  { k: 'h', tags: ['any', 'new', 'light', 'sun'], ar: 'اقرؤوا الزَّهراوَين: البقرةَ وسورةَ آل عمران، فإنهما تأتيان يومَ القيامة كأنهما غمامتان، أو كأنهما غَيايتان، أو كأنهما فِرْقان من طيرٍ صوافَّ، تُحاجّان عن أصحابهما',
+    en: 'Recite the two radiant ones, Al-Baqarah and Āl ʿImrān, for on the Day of Resurrection they will come like two clouds, or two canopies, or two flocks of birds in ranks, pleading for their companions.', src: ['Muslim', 'رواه مسلم'] },
+  { k: 'h', tags: ['light', 'new'], ar: 'الماهرُ بالقرآن مع السَّفَرة الكرام البَرَرة، والذي يقرأ القرآنَ ويتتعتع فيه وهو عليه شاقٌّ له أجران',
+    en: 'The one skilled in the Quran is with the noble, righteous scribes. And the one who recites it while stumbling, finding it hard, has a double reward.', src: ['Al-Bukhārī & Muslim', 'متفق عليه'] },
+  { k: 'h', tags: ['any'], ar: 'مَن قرأ حرفًا من كتاب الله فله به حسنة، والحسنةُ بعشر أمثالها، لا أقول «الم» حرف، ولكن ألفٌ حرف، ولامٌ حرف، وميمٌ حرف',
+    en: 'Whoever reads a letter from the Book of Allah has a good deed for it, and each good deed is multiplied ten times. I do not say Alif-Lām-Mīm is one letter: Alif is a letter, Lām is a letter and Mīm is a letter.', src: ['At-Tirmidhī', 'رواه الترمذي'] },
+  { k: 'h', tags: ['sun'], ar: 'يُقال لصاحب القرآن: اقرأْ وارتقِ ورتِّلْ كما كنتَ ترتِّل في الدنيا، فإنَّ منزلتك عند آخر آيةٍ تقرؤها',
+    en: 'It will be said to the companion of the Quran: recite and rise, and recite slowly as you used to in the world, for your rank is at the last verse you recite.', src: ['Abū Dāwūd & At-Tirmidhī', 'رواه أبو داود والترمذي'] },
+  { k: 'h', tags: ['new', 'light'], ar: 'تعاهدوا هذا القرآنَ، فوالذي نفسُ محمدٍ بيده لهو أشدُّ تفلُّتًا من الإبل في عُقُلها',
+    en: 'Keep revising this Quran. By the One in whose hand is Muhammad’s soul, it slips away faster than camels from their tethers. (This is why review matters.)', src: ['Muslim', 'رواه مسلم'] },
+  { k: 'h', tags: ['light'], ar: 'أحبُّ الأعمال إلى الله أدومُها وإن قلَّ',
+    en: 'The deeds most loved by Allah are the most consistent ones, even if they are small.', src: ['Al-Bukhārī & Muslim', 'متفق عليه'] },
+  { k: 'h', tags: ['any'], ar: 'إنَّ الله يرفع بهذا الكتاب أقوامًا ويضع به آخرين',
+    en: 'Allah raises some people by this Book and lowers others by it.', src: ['Muslim', 'رواه مسلم'] },
+  { k: 'h', tags: ['sun'], ar: 'ما اجتمع قومٌ في بيتٍ من بيوت الله يتلون كتابَ الله ويتدارسونه بينهم إلا نزلت عليهم السَّكينة، وغشيتهم الرحمة، وحفَّتهم الملائكة، وذكرهم الله فيمن عنده',
+    en: 'No people gather in one of the houses of Allah, reciting the Book of Allah and studying it together, without tranquillity descending on them, mercy covering them, the angels surrounding them, and Allah mentioning them among those with Him.', src: ['Muslim', 'رواه مسلم'] },
+];
+let quoteShift = 0;
+function dayKind(d) { return d === 6 ? 'sun' : SESSION_DAYS.includes(d) ? 'new' : 'light'; }
+function renderQuote() {
+  const kind = dayKind(sel);
+  const pool = QUOTES.filter((q) => q.tags.includes(kind) || q.tags.includes('any'));
+  const date = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + sel);
+  const doy = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 864e5);
+  const q = pool[(((doy * 5 + quoteShift) % pool.length) + pool.length) % pool.length];
+  const ar = S.lang === 'ar';
+  const open = q.k === 'q' ? '﴿' : '«', close = q.k === 'q' ? '﴾' : '»';
+  $('#quoteText').textContent = `${open}${q.ar}${close}`;
+  $('#quoteText').className = 'quote-ar' + (q.k === 'q' ? ' is-quran' : '');
+  $('#quoteMeaning').hidden = ar;
+  $('#quoteMeaning').textContent = q.en;
+  $('#quoteSrc').textContent = (q.k === 'h' && !ar ? 'Hadith · ' : '') + q.src[ar ? 1 : 0];
+  $('#quoteNext').textContent = ar ? 'غيرها' : 'Another';
+  $('#quoteLabel').textContent = ar ? (q.k === 'q' ? 'من كتاب الله' : 'من السنة') : (q.k === 'q' ? 'From the Quran' : 'From the Sunnah');
+}
+
+// ---------------------------------------------------------------- weekly reward
+const REWARD_TXT = {
+  en: {
+    title: 'This week’s reward',
+    lede: 'Pick it now, enjoy it after Sunday’s tasmeeʿ. It unlocks when tasmeeʿ is ticked and about 80% of the week is done.',
+    meter: (d, t) => `${d} of ${t} ticked this week`,
+    tasmeeNo: 'Tasmeeʿ: not yet', tasmeeYes: 'Tasmeeʿ: done',
+    ideas: 'Small ideas', ideasChange: 'Change reward', custom: 'or write your own…',
+    chosen: (r) => `Your reward: ${r}`,
+    none: 'No reward picked yet. Choosing it on Monday gives the week something to look forward to.',
+    unlocked: 'Week complete. Alhamdulillah, enjoy it!',
+    earned: (r) => (r ? `You earned: ${r}` : 'Pick something below and enjoy it.'),
+    thanks: 'A lovely habit: say alhamdulillah, and give a little sadaqah as thanks.',
+    hizb: (n, left) => `Quarters completed with this plan: ${n} · ${left} more to a full ḥizb`,
+    hizbDone: 'A full ḥizb completed! That deserves something bigger:',
+    hizbNext: 'When you reach a full ḥizb (4 quarters), go bigger:',
+    small: [
+      'Your favourite coffee or drink, somewhere nice', 'A dessert you love', 'A walk somewhere beautiful',
+      'Coloured tajwīd pens or a new mushaf bookmark', 'A book you’ve been wanting', 'A calm evening with people you love',
+      'A small plant for your reading corner', 'An hour of rest with no obligations', 'A favourite meal at home', 'A sadaqah as thanks to Allah',
+    ],
+    big: ['A meal at your favourite restaurant', 'A beautiful new mushaf or cover', 'A day trip somewhere new', 'Treat the family to something sweet, to share the joy'],
+  },
+  ar: {
+    title: 'مكافأة هذا الأسبوع',
+    lede: 'تُختار الآن، ويُستمتع بها بعد تسميع الأحد. تُفتح عند إتمام التسميع وإنجاز نحو ٨٠٪ من الأسبوع.',
+    meter: (d, t) => `تم ${d} من ${t} هذا الأسبوع`,
+    tasmeeNo: 'التسميع: لم يتم بعد', tasmeeYes: 'التسميع: تم',
+    ideas: 'أفكار بسيطة', ideasChange: 'تغيير المكافأة', custom: 'أو اكتب مكافأة أخرى…',
+    chosen: (r) => `المكافأة: ${r}`,
+    none: 'لم تُختر مكافأة بعد. اختيارها يوم الاثنين يجعل للأسبوع شيئًا يُنتظر.',
+    unlocked: 'اكتمل الأسبوع. الحمد لله، هنيئًا بالمكافأة!',
+    earned: (r) => (r ? `المكافأة المستحقة: ${r}` : 'اختر شيئًا من الأفكار واستمتع به.'),
+    thanks: 'عادة جميلة: حمد الله، وصدقة صغيرة شكرًا له.',
+    hizb: (n, left) => `الأرباع المكتملة بهذا الجدول: ${n} — باقٍ ${left} على حزب كامل`,
+    hizbDone: 'اكتمل حزب كامل! هذا يستحق مكافأة أكبر:',
+    hizbNext: 'عند إكمال حزب كامل (٤ أرباع)، مكافأة أكبر:',
+    small: [
+      'المشروب المفضل في مكان جميل', 'حلوى مفضلة', 'نزهة في مكان جميل',
+      'أقلام تجويد ملونة أو فاصل جديد للمصحف', 'كتاب طال انتظاره', 'أمسية هادئة مع الأحبة',
+      'نبتة صغيرة لركن القراءة', 'ساعة راحة بلا أي التزام', 'وجبة مفضلة في البيت', 'صدقة شكرًا لله',
+    ],
+    big: ['وجبة في المطعم المفضل', 'مصحف جديد جميل أو غلاف له', 'رحلة يوم إلى مكان جديد', 'حلوى للعائلة مشاركةً للفرحة'],
+  },
+};
+
+function weekStats() {
+  let done = 0, total = 0;
+  for (let d = 0; d < 7; d++) { const [a, b] = tally(d); done += a; total += b; }
+  const tasmee = !!dayProg(6).sunTasmee;
+  return { done, total, tasmee, success: tasmee && total > 0 && done / total >= 0.8 };
+}
+
+function renderReward() {
+  const R = REWARD_TXT[S.lang];
+  const st = weekStats();
+  // keep the record of successful weeks in step with the ticks
+  S.wins = Array.isArray(S.wins) ? S.wins : [];
+  const had = S.wins.includes(WEEK);
+  S.winW = S.winW || {};
+  const w = heavy() ? 0.5 : 1;
+  if (st.success && (!had || S.winW[WEEK] !== w)) { if (!had) S.wins.push(WEEK); S.winW[WEEK] = w; save(); }
+  if (!st.success && had) { S.wins = S.wins.filter((x) => x !== WEEK); delete S.winW[WEEK]; save(); }
+
+  const reward = ((S.reward || {})[WEEK] || '').trim();
+  const n = S.wins.reduce((sum, k) => sum + (S.winW[k] ?? 1), 0);
+  const left = n % 4 === 0 ? 4 : 4 - (n % 4);
+  const hizbNow = st.success && n > 0 && n % 4 === 0;
+
+  const card = $('#reward');
+  card.classList.toggle('won', st.success);
+  $('#rewardTitle').textContent = R.title;
+  $('#rewardLede').textContent = st.success ? (myName() ? KX().unlockedN(myName()) : R.unlocked) : R.lede;
+  $('#rewardCardBtn').hidden = !st.success;
+  $('#rewardCardBtn').textContent = KX().saveCard;
+  $('#rewardLede').classList.toggle('big', st.success);
+  $('#rewardBar').style.setProperty('--p', st.total ? Math.min(1, st.done / st.total) : 0);
+  $('#rewardMeter').textContent = R.meter(num(st.done), num(st.total));
+  $('#rewardTasmee').textContent = st.tasmee ? R.tasmeeYes : R.tasmeeNo;
+  $('#rewardTasmee').classList.toggle('ok', st.tasmee);
+  $('#rewardChosen').textContent = st.success ? R.earned(reward) : reward ? R.chosen(reward) : R.none;
+  $('#rewardThanks').hidden = !st.success;
+  $('#rewardThanks').textContent = R.thanks;
+  $('#rewardIdeasLabel').textContent = reward ? R.ideasChange : R.ideas;
+  if (rewardOpenSync) { $('#rewardPick').open = !reward; $('#rewardBigPick').open = hizbNow; rewardOpenSync = false; }
+  $('#rewardIdeas').innerHTML = R.small.map((x) => `<button type="button" class="idea${x === reward ? ' on' : ''}" aria-pressed="${x === reward}">${esc(x)}</button>`).join('');
+  const custom = $('#rewardCustom');
+  custom.placeholder = R.custom;
+  if (document.activeElement !== custom) custom.value = R.small.includes(reward) || R.big.includes(reward) ? '' : reward;
+  $('#rewardHizb').textContent = R.hizb(qty(n), qty(left));
+  $('#rewardBigLabel').textContent = hizbNow ? R.hizbDone : R.hizbNext;
+  $('#rewardBig').innerHTML = R.big.map((x) => `<button type="button" class="idea big${x === reward ? ' on' : ''}" aria-pressed="${x === reward}">${esc(x)}</button>`).join('');
+  $('#rewardBigWrap').classList.toggle('lit', hizbNow);
+}
+
+let rewardOpenSync = true;
+const qty = (x) => { const whole = Math.floor(x), half = x - whole >= 0.5; return whole === 0 && half ? '½' : `${num(whole)}${half ? '½' : ''}`; };
+function setReward(text) {
+  rewardOpenSync = true;
+  S.reward = { [WEEK]: text };
+  save();
+  renderReward();
+}
+
+// ---------------------------------------------------------------- sheikhs, diary, heart
+const X_TXT = {
+  en: {
+    shTitle: 'Sheikhs to listen to',
+    shLede: 'Every time you listen to a sheikh’s recitation, or share it, their good trace in the world grows. For those who have passed away it is a continuing charity (ṣadaqah jāriyah). Pick one for your listening days, and remember them in your duʿāʾ.',
+    late: '(raḥimahullāh)',
+    pick: 'Listen with him', picked: 'Your listening reciter',
+    tags: { mem: 'Best for memorizing', listen: 'For listening', tajwid: 'Tajwīd model', heart: 'Moves the heart' },
+    links: 'Listen online on Quran.com, where you can choose any of these reciters:',
+    linkB: 'Al-Baqarah', linkI: 'Āl ʿImrān',
+    teacherLbl: 'Your tasmeeʿ teacher', teacherPh: 'Name (optional)',
+    teacherNote: 'Teaching the Quran is a continuing charity for your teacher. A short duʿāʾ for them is added after every Sunday tasmeeʿ.',
+    withReciter: (n) => `with ${n}`,
+    duaTitle: 'Duʿāʾ for your teacher',
+    duaDet: (n) => `Ask Allah to reward ${n || 'your teacher'} for every letter of the Quran they taught you.`,
+    diaryTitle: 'Verses that touched my heart',
+    diaryLede: 'When an ayah moves you while memorizing or reviewing, save it here with a few words about why.',
+    diaryCount: (n) => (n === 1 ? '1 verse' : `${n} verses`),
+    surahs: { 3: 'Āl ʿImrān', 2: 'Al-Baqarah', 0: 'Another sūrah' },
+    otherPh: 'Sūrah name', ayahLbl: 'Ayah', notePh: 'What did this ayah say to you?',
+    save: 'Save to diary', saved: 'Saved',
+    empty: 'No verses yet. The first one you save will appear here.',
+    del: 'Delete', delSure: 'Tap again to delete',
+    heartQ: 'How is your heart after today?',
+    levels: ['Heavy', 'Tired', 'Okay', 'Peaceful', 'Full of light'],
+    say: [
+      'Some days are heavy. The effort itself is worship, and the one who recites with difficulty has a double reward. Rest now, and come back tomorrow.',
+      'Tired is allowed. You still showed up today, and that is what counts. أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ',
+      'Steady is good. The deeds most loved by Allah are the consistent ones, even if small.',
+      'Alhamdulillah. Hold on to this feeling. If a verse touched you today, save it in your diary.',
+      'Alhamdulillah! This is the sweetness of the Quran. Save the verse that lit up your day.',
+    ],
+    toDiary: 'Save a verse in my diary',
+  },
+  ar: {
+    shTitle: 'مشايخ للاستماع',
+    shLede: 'كل استماع لتلاوة شيخ أو مشاركتها يزيد أثره الطيب في الدنيا، وهي لمن رحل منهم صدقة جارية. يمكن اختيار أحدهم لأيام الاستماع، مع ذكرهم في الدعاء.',
+    late: 'رحمه الله',
+    pick: 'الاستماع له', picked: 'قارئ أيام الاستماع',
+    tags: { mem: 'للحفظ', listen: 'للاستماع', tajwid: 'قدوة في التجويد', heart: 'يحرّك القلب' },
+    links: 'للاستماع على Quran.com مع اختيار أي قارئ من هؤلاء:',
+    linkB: 'سورة البقرة', linkI: 'سورة آل عمران',
+    teacherLbl: 'معلّم التسميع', teacherPh: 'الاسم (اختياري)',
+    teacherNote: 'تعليم القرآن صدقة جارية للمعلّم، ويُضاف دعاء قصير له بعد تسميع كل أحد.',
+    withReciter: (n) => `بصوت ${n}`,
+    duaTitle: 'الدعاء للمعلّم',
+    duaDet: (n) => `«جزى الله ${n || 'المعلّم'} خيرًا عن كل حرف من القرآن»، دعاء قصير بعد التسميع.`,
+    diaryTitle: 'آيات لمست القلب',
+    diaryLede: 'حين تؤثّر آية أثناء الحفظ أو المراجعة، تُحفظ هنا مع كلمات قليلة عن سبب أثرها.',
+    diaryCount: (n) => `${n} ${n === 1 ? 'آية' : n === 2 ? 'آيتان' : n <= 10 ? 'آيات' : 'آية'}`,
+    surahs: { 3: 'آل عمران', 2: 'البقرة', 0: 'سورة أخرى' },
+    otherPh: 'اسم السورة', ayahLbl: 'الآية', notePh: 'ماذا قالت هذه الآية للقلب؟',
+    save: 'حفظ في الدفتر', saved: 'تم الحفظ',
+    empty: 'لا آيات بعد. أول آية تُحفظ ستظهر هنا.',
+    del: 'حذف', delSure: 'اضغط مرة أخرى للحذف',
+    heartQ: 'كيف القلب بعد ورد اليوم؟',
+    levels: ['مُثقَل', 'متعب', 'لا بأس', 'مطمئن', 'ممتلئ نورًا'],
+    say: [
+      'بعض الأيام ثقيلة، والجهد نفسه عبادة، ومن يقرأ القرآن وهو عليه شاق له أجران. الراحة الآن، والعودة غدًا بإذن الله.',
+      'التعب مقبول، والحضور اليوم هو المهم. ﴿أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ﴾',
+      'الثبات جميل؛ أحب الأعمال إلى الله أدومها وإن قل.',
+      'الحمد لله. هذا الشعور يستحق أن يُحفظ؛ وإن لمست آيةٌ القلبَ اليوم، فمكانها الدفتر.',
+      'الحمد لله! هذه حلاوة القرآن. الآية التي أنارت اليوم مكانها الدفتر.',
+    ],
+    toDiary: 'حفظ آية في الدفتر',
+  },
+};
+const X = () => X_TXT[S.lang];
+
+const SHEIKHS = [
+  { id: 'husary', ar: 'محمود خليل الحصري', en: 'Maḥmūd Khalīl al-Ḥuṣarī', late: true, meta: ['Egypt · 1917–1980', 'مصر — ١٩١٧–١٩٨٠'], tags: ['mem', 'tajwid'],
+    why: ['His muʿallim (teaching) recording is made for memorizing: slow and precise, with pauses to repeat after him.', 'مصحفه المعلّم مصنوع للحفظ: بطيء ودقيق، مع وقفات للترديد خلفه.'] },
+  { id: 'minshawi', ar: 'محمد صديق المنشاوي', en: 'Muḥammad Ṣiddīq al-Minshāwī', late: true, meta: ['Egypt · 1920–1969', 'مصر — ١٩٢٠–١٩٦٩'], tags: ['heart', 'mem'],
+    why: ['A deeply moving murattal, and a teaching recording where children repeat each ayah after him.', 'ترتيل مؤثر جدًا، وله مصحف معلّم يردد فيه الأطفال كل آية خلفه.'] },
+  { id: 'abdulbasit', ar: 'عبد الباسط عبد الصمد', en: 'ʿAbd al-Bāsiṭ ʿAbd aṣ-Ṣamad', late: true, meta: ['Egypt · 1927–1988', 'مصر — ١٩٢٧–١٩٨٨'], tags: ['listen', 'heart'],
+    why: ['One of the most loved voices in the world. His murattal is clear and beautiful for listening days.', 'من أحب الأصوات إلى الناس في العالم، وترتيله واضح وجميل لأيام الاستماع.'] },
+  { id: 'banna', ar: 'محمود علي البنا', en: 'Maḥmūd ʿAlī al-Bannā', late: true, meta: ['Egypt · 1926–1985', 'مصر — ١٩٢٦–١٩٨٥'], tags: ['tajwid', 'listen'],
+    why: ['A calm, balanced murattal with excellent tajwīd, easy to follow in the mushaf.', 'ترتيل هادئ متزن بتجويد متقن، تسهل متابعته في المصحف.'] },
+  { id: 'ayyub', ar: 'محمد أيوب', en: 'Muḥammad Ayyūb', late: true, meta: ['Madinah · 1952–2016', 'المدينة المنورة — ١٩٥٢–٢٠١٦'], tags: ['mem'],
+    why: ['Former imam of the Prophet’s Mosque. A gentle, steady pace that many memorizers love.', 'إمام المسجد النبوي سابقًا، بإيقاع هادئ ثابت يحبه كثير من الحفّاظ.'] },
+  { id: 'ghamdi', ar: 'سعد الغامدي', en: 'Saʿd al-Ghāmidī', late: false, meta: ['Saudi Arabia', 'السعودية'], tags: ['mem', 'listen'],
+    why: ['Smooth and clear; a favourite for memorizing on the go.', 'تلاوة سلسة واضحة، ومن المفضَّلين للحفظ أثناء التنقل.'] },
+  { id: 'afasy', ar: 'مشاري راشد العفاسي', en: 'Mishārī Rāshid al-ʿAfāsī', late: false, meta: ['Kuwait', 'الكويت'], tags: ['listen'],
+    why: ['Clear and melodic, and available on almost every Quran app.', 'تلاوة واضحة عذبة، ومتاحة في أغلب تطبيقات القرآن.'] },
+];
+const reciterName = () => { const s = SHEIKHS.find((x) => x.id === S.reciter); return s ? s[S.lang === 'ar' ? 'ar' : 'en'] : ''; };
+
+const HEART_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.5 2.9 4.5 6.6 4.5c2.1 0 3.6 1.2 5.4 3.2 1.8-2 3.3-3.2 5.4-3.2 3.7 0 5.7 4 4.2 7.3C19.5 16.4 12 21 12 21z"/></svg>';
+const dayKey = (d) => isoDate(new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + d));
+const heartOf = (d) => (S.heart || {})[dayKey(d)] || 0;
+function heartDot(d) {
+  const v = heartOf(d);
+  return v ? `<span class="hdot" style="--h:${v}" title="${esc(X().levels[v - 1])}">${HEART_SVG}</span>` : '';
+}
+
+function renderHeart(complete) {
+  const x = X(), v = heartOf(sel);
+  $('#heartBox').hidden = !complete;
+  if (!complete) return;
+  $('#heartQ').textContent = myName() ? KX().heartQN(myName()) : x.heartQ;
+  $('#heartScale').innerHTML = x.levels.map((lbl, i) => `<button type="button" class="hbtn${i < v ? ' fill' : ''}${i + 1 === v ? ' on' : ''}" role="radio" aria-checked="${i + 1 === v}" data-v="${i + 1}" aria-label="${esc(lbl)}">${HEART_SVG}<span>${esc(lbl)}</span></button>`).join('');
+  $('#heartSay').hidden = !v;
+  if (v) $('#heartSay').textContent = x.say[v - 1];
+  $('#heartDiary').hidden = v < 4;
+  $('#heartDiary').textContent = x.toDiary;
+}
+
+function renderSheikhs() {
+  const x = X(), ar = S.lang === 'ar';
+  $('#shTitle').textContent = x.shTitle;
+  $('#shLede').textContent = x.shLede;
+  $('#shList').innerHTML = SHEIKHS.map((s) => {
+    const on = S.reciter === s.id;
+    return `<li class="sheikh${on ? ' on' : ''}">
+      <div class="sh-top"><div><div class="sh-name" lang="ar" dir="rtl">${esc(s.ar)}${s.late ? ` <span class="sh-late">${ar ? esc(x.late) : ''}</span>` : ''}</div>
+      ${ar ? '' : `<div class="sh-en">${esc(s.en)}${s.late ? ` <span class="sh-late">${esc(x.late)}</span>` : ''}</div>`}
+      <div class="sh-meta">${esc(s.meta[ar ? 1 : 0])}</div></div>
+      <button type="button" class="toggle sh-pick" data-id="${s.id}" aria-pressed="${on}">${esc(on ? x.picked : x.pick)}</button></div>
+      <p class="sh-why">${esc(s.why[ar ? 1 : 0])}</p>
+      <div class="sh-tags">${s.tags.map((t) => `<span class="sh-tag">${esc(x.tags[t])}</span>`).join('')}</div></li>`;
+  }).join('');
+  $('#shLinks').innerHTML = `${esc(x.links)} <a href="https://quran.com/2" target="_blank" rel="noopener">${esc(x.linkB)}</a>${SEP()}<a href="https://quran.com/3" target="_blank" rel="noopener">${esc(x.linkI)}</a>`;
+  $('#teacherLbl').textContent = x.teacherLbl;
+  const tin = $('#teacher');
+  tin.placeholder = x.teacherPh;
+  if (document.activeElement !== tin) tin.value = S.teacher || '';
+  $('#teacherNote').textContent = x.teacherNote;
+}
+
+let diaryArmed = null;
+function renderDiary() {
+  const x = X(), list = S.diary || [];
+  $('#diaryTitle').textContent = x.diaryTitle;
+  $('#diaryLede').textContent = x.diaryLede;
+  $('#diaryCount').textContent = list.length ? x.diaryCount(num(list.length)) : '';
+  const sel = $('#dSurah'), cur = sel.value || '3';
+  sel.innerHTML = ['3', '2', '0'].map((k) => `<option value="${k}">${esc(x.surahs[k])}</option>`).join('');
+  sel.value = cur;
+  $('#dOther').hidden = sel.value !== '0';
+  $('#dOther').placeholder = x.otherPh;
+  $('#dAyahLbl').textContent = x.ayahLbl;
+  $('#dAyah').max = sel.value === '2' ? 286 : sel.value === '3' ? 200 : 286;
+  $('#dNote').placeholder = x.notePh;
+  if (!$('#dSave').dataset.flash) $('#dSave').textContent = x.save;
+  const fmtD = (iso) => { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString(S.lang === 'ar' ? 'ar-EG' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); };
+  $('#diaryList').innerHTML = list.length
+    ? list.map((e) => {
+      const sname = e.surah === '0' ? e.other || x.surahs[0] : x.surahs[e.surah];
+      return `<li class="entry"><div class="entry-top"><strong>${esc(sname)}${SEP()}${num(e.ayah)}</strong><span>${esc(fmtD(e.date))}</span></div>
+        ${e.note ? `<p class="entry-note">${esc(e.note)}</p>` : ''}
+        <button type="button" class="entry-del" data-id="${e.id}">${esc(diaryArmed === e.id ? x.delSure : x.del)}</button></li>`;
+    }).join('')
+    : `<li class="entry empty">${esc(x.empty)}</li>`;
+}
+
+function renderExtras() { renderSheikhs(); renderDiary(); }
+
+function setupExtras() {
+  $('#heartScale').addEventListener('click', (e) => {
+    const b = e.target.closest('.hbtn');
+    if (!b) return;
+    S.heart = { ...(S.heart || {}), [dayKey(sel)]: +b.dataset.v };
+    save(); renderStrip(); renderDay();
+  });
+  $('#heartDiary').addEventListener('click', () => {
+    $('#diary').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    setTimeout(() => $('#dAyah').focus({ preventScroll: true }), 400);
+  });
+  $('#shList').addEventListener('click', (e) => {
+    const b = e.target.closest('.sh-pick');
+    if (!b) return;
+    S.reciter = S.reciter === b.dataset.id ? '' : b.dataset.id;
+    save(); renderSheikhs(); renderDay();
+  });
+  $('#teacher').addEventListener('input', (e) => { S.teacher = e.target.value; save(); renderDay(); });
+  $('#dSurah').addEventListener('change', () => renderDiary());
+  $('#diaryForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const surah = $('#dSurah').value, ayah = parseInt($('#dAyah').value, 10);
+    const max = surah === '3' ? 200 : 286;
+    if (!Number.isInteger(ayah) || ayah < 1 || ayah > max) { $('#dAyah').focus(); return; }
+    const entry = { id: Date.now().toString(36), date: isoDate(new Date()), surah, other: $('#dOther').value.trim(), ayah, note: $('#dNote').value.trim() };
+    S.diary = [entry, ...(S.diary || [])];
+    save();
+    $('#dAyah').value = ''; $('#dNote').value = ''; $('#dOther').value = '';
+    const btn = $('#dSave');
+    btn.textContent = X().saved; btn.dataset.flash = '1';
+    setTimeout(() => { delete btn.dataset.flash; btn.textContent = X().save; }, 1600);
+    renderDiary();
+  });
+  $('#diaryList').addEventListener('click', (e) => {
+    const b = e.target.closest('.entry-del');
+    if (!b) return;
+    if (diaryArmed === b.dataset.id) { S.diary = (S.diary || []).filter((x) => x.id !== b.dataset.id); diaryArmed = null; save(); }
+    else { diaryArmed = b.dataset.id; setTimeout(() => { if (diaryArmed === b.dataset.id) { diaryArmed = null; renderDiary(); } }, 4000); }
+    renderDiary();
+  });
+}
+
+// ---------------------------------------------------------------- name, catch-up, week card, backup, history
+const K_TXT = {
+  en: {
+    helloQ: 'Make it yours: what’s your name?', namePh: 'Your name', saveName: 'Save',
+    hello: (n) => `As-salāmu ʿalaykum, ${n}`, edit: 'Edit name', planOf: (n) => `${n}’s plan`,
+    doneN: (n) => [`Done for today, ${n}. May Allah accept it.`, `This day is complete, ${n}. May Allah accept it.`],
+    heartQN: (n) => `How is your heart after today, ${n}?`,
+    unlockedN: (n) => `Week complete, ${n}. Alhamdulillah, enjoy it!`,
+    partPickLbl: 'Today I’m memorizing', planned: 'planned for today',
+    behindNote: 'Running behind is completely normal. Pick the part you’re actually on. From Thursday, a catch-up slot appears for any part still missing.',
+    catchTitle: (n) => `Catch-up: ${n}`,
+    catchDet: 'If you have 30 minutes today, memorize this missing part the usual way. It counts for today, so the light session below becomes optional.',
+    keepTitle: 'Keep a copy',
+    keepLede: 'Save your week as an image to keep or send, or save a backup file that restores everything on a new phone. A screenshot of the card works too.',
+    saveCard: 'Save week card', saveBackup: 'Save backup file', restore: 'Restore from backup',
+    restoreQ: 'This replaces everything on this phone with the backup. Restore it?', restoreYes: 'Restore', restoreNo: 'Cancel',
+    restored: 'Restored. Welcome back!', savedImg: 'Week card saved.', savedBackup: 'Backup saved.', declined: 'Not saved.',
+    badFile: 'That file isn’t a Quarter by Quarter backup.', noSave: 'Saving isn’t available here. Take a screenshot of the card instead.',
+    pastTitle: 'Past weeks', pastEmpty: 'Finished weeks will appear here, starting next week.', saveImgShort: 'Save image',
+    cardEyebrow: 'QUARTER BY QUARTER', cardWeek: (n) => (n ? `${n}’s week` : 'My week'),
+    cardQuarter: 'This week’s quarter', cardTicked: 'Ticked', cardTasmee: 'Tasmeeʿ', cardVerses: 'Verses in diary',
+    done: 'Done', notYet: 'Not yet', cardReward: 'This week’s reward', cardNoReward: 'No reward chosen',
+    cardQuarters: (q) => `Quarters completed with this plan: ${q}`, longWeek: (w) => `Long quarter · week ${w} of 2`,
+    cardQuote: 'The deeds most loved by Allah are the most consistent, even if small.', cardSrc: 'Al-Bukhārī & Muslim',
+    unlockedTag: 'Reward unlocked',
+  },
+  ar: {
+    helloQ: 'لتكن الخطة باسمك: ما الاسم؟', namePh: 'الاسم', saveName: 'حفظ',
+    hello: (n) => `السلام عليكم يا ${n}`, edit: 'تعديل الاسم', planOf: (n) => `خطة ${n}`,
+    doneN: (n) => [`اكتمل ورد اليوم يا ${n}. تقبّل الله.`, `اكتمل هذا اليوم يا ${n}. تقبّل الله.`],
+    heartQN: (n) => `كيف القلب بعد ورد اليوم يا ${n}؟`,
+    unlockedN: (n) => `اكتمل الأسبوع يا ${n}. الحمد لله، هنيئًا بالمكافأة!`,
+    partPickLbl: 'حفظ اليوم', planned: 'المقرر اليوم',
+    behindNote: 'التأخر أمر طبيعي تمامًا. يُختار الجزء الذي وصل إليه الحفظ فعلًا، ومن الخميس تظهر خانة تعويض لأي جزء متبقٍّ.',
+    catchTitle: (n) => `تعويض — ${n}`,
+    catchDet: 'إن توفرت ٣٠ دقيقة اليوم، يُحفظ هذا الجزء المتبقي بالطريقة المعتادة، ويُحسب ورد اليوم، فتصبح الجلسة الخفيفة اختيارية.',
+    keepTitle: 'نسخة للاحتفاظ',
+    keepLede: 'حفظ الأسبوع صورةً للاحتفاظ بها أو إرسالها، أو ملف نسخة احتياطية يعيد كل شيء على هاتف جديد. ويكفي أيضًا تصوير البطاقة (سكرين شوت).',
+    saveCard: 'حفظ بطاقة الأسبوع', saveBackup: 'حفظ نسخة احتياطية', restore: 'استرجاع من نسخة',
+    restoreQ: 'سيُستبدل كل ما على هذا الهاتف بالنسخة الاحتياطية. استرجاع؟', restoreYes: 'استرجاع', restoreNo: 'إلغاء',
+    restored: 'تم الاسترجاع. أهلًا بالعودة!', savedImg: 'تم حفظ بطاقة الأسبوع.', savedBackup: 'تم حفظ النسخة الاحتياطية.', declined: 'لم يتم الحفظ.',
+    badFile: 'هذا الملف ليس نسخة احتياطية من «ربعًا ربعًا».', noSave: 'الحفظ غير متاح هنا؛ يمكن تصوير البطاقة بدلًا من ذلك.',
+    pastTitle: 'الأسابيع السابقة', pastEmpty: 'ستظهر الأسابيع المكتملة هنا بدءًا من الأسبوع القادم.', saveImgShort: 'حفظ الصورة',
+    cardEyebrow: 'ربعًا ربعًا', cardWeek: (n) => (n ? `أسبوع ${n}` : 'أسبوعي'),
+    cardQuarter: 'ربع هذا الأسبوع', cardTicked: 'المنجز', cardTasmee: 'التسميع', cardVerses: 'آيات في الدفتر',
+    done: 'تم', notYet: 'لم يتم', cardReward: 'مكافأة الأسبوع', cardNoReward: 'لم تُختر مكافأة',
+    cardQuarters: (q) => `الأرباع المكتملة بهذا الجدول: ${q}`, longWeek: (w) => `ربع طويل — الأسبوع ${w === 1 ? '١' : '٢'} من ٢`,
+    cardQuote: '', cardSrc: 'متفق عليه',
+    unlockedTag: 'المكافأة مستحقة',
+  },
+};
+const KX = () => K_TXT[S.lang];
+const myName = () => (S.name || '').trim();
+
+// ---- which part is memorized on a session day (defaults catch up automatically)
+function memorizedBefore(d) {
+  const set = new Set();
+  for (const dd of SESSION_DAYS) if (dd < d && dayProg(dd).new) set.add(pickedPart(dd));
+  return set;
+}
+function pickedPart(d) {
+  const o = ((S.partPick || {})[WEEK] || {})[d];
+  if (o !== undefined) return o;
+  if (d > TODAY) return d;                      // future days follow the plan
+  const before = memorizedBefore(d);
+  for (let i = 0; i <= d; i++) if (!before.has(i)) return i;
+  return d;
+}
+function memorizedAll() {
+  const set = new Set();
+  for (const dd of SESSION_DAYS) if (dayProg(dd).new) set.add(pickedPart(dd));
+  for (const ld of [3, 4, 5]) for (let i = 0; i < 3; i++) if (dayProg(ld)['catch' + i]) set.add(i);
+  return set;
+}
+function catchPart(ld) {
+  if (TODAY < 3) return undefined;
+  for (let i = 0; i < 3; i++) if (dayProg(ld)['catch' + i]) return i;
+  const have = memorizedAll();
+  for (let i = 0; i < 3; i++) if (!have.has(i)) return i;
+  return undefined;
+}
+
+// ---- week snapshot (for the card and the history)
+function tallyWith(d, prog) {
+  const bs = blocks(d);
+  const req = bs.filter((b) => !b.optional && !b.group);
+  let total = req.length, done = req.filter((b) => prog[b.id]).length;
+  if (bs.some((b) => b.group)) { total += 1; if (bs.some((b) => b.group && prog[b.id])) done += 1; }
+  return [done, total];
+}
+const quartersTotal = () => (S.wins || []).reduce((s, k) => s + ((S.winW || {})[k] ?? 1), 0);
+function snapshot(key) {
+  const prog = (S.progress || {})[key] || {};
+  const [y, m, d0] = key.split('-').map(Number);
+  const days = [];
+  let done = 0, total = 0;
+  for (let d = 0; d < 7; d++) {
+    const [a, b] = tallyWith(d, prog[d] || {});
+    done += a; total += b;
+    days.push({ a, b, date: isoDate(new Date(y, m - 1, d0 + d)), heart: (S.heart || {})[isoDate(new Date(y, m - 1, d0 + d))] || 0 });
+  }
+  const end = isoDate(new Date(y, m - 1, d0 + 6));
+  return {
+    key, end, days, done, total,
+    tasmee: !!(prog[6] || {}).sunTasmee,
+    success: (S.wins || []).includes(key),
+    reward: (((S.reward || {})[key]) || '').trim(),
+    range: active(), heavy: heavy(), hw: hw(),
+    verses: (S.diary || []).filter((e) => e.date >= key && e.date <= end).length,
+    quarters: quartersTotal(),
+  };
+}
+function archiveOldWeeks() {
+  const keys = Object.keys(S.progress || {}).filter((k) => k !== WEEK);
+  if (!keys.length) return;
+  S.history = Array.isArray(S.history) ? S.history : [];
+  for (const k of keys) {
+    const snap = snapshot(k);
+    if (snap.done > 0) S.history = [snap, ...S.history.filter((h) => h.key !== k)];
+  }
+  S.history.sort((a, b) => (a.key < b.key ? 1 : -1));
+  S.history = S.history.slice(0, 104);
+  S.progress = { [WEEK]: (S.progress || {})[WEEK] || {} };
+  save();
+}
+
+// ---- dates
+const parseIso = (iso) => { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d); };
+function weekRange(sn) {
+  const loc = S.lang === 'ar' ? 'ar-EG' : 'en-GB';
+  const a = parseIso(sn.key), b = parseIso(sn.end);
+  return `${a.toLocaleDateString(loc, { day: 'numeric', month: 'short' })} – ${b.toLocaleDateString(loc, { day: 'numeric', month: 'long', year: 'numeric' })}`;
+}
+
+// ---- the week card (canvas → PNG)
+const CARD = { bg: '#f4f6f3', surface: '#ffffff', ink: '#1a2624', muted: '#5f6d69', line: '#dde3df', accent: '#2c6a5c', accentSoft: '#e3efea', gold: '#b98a2e', goldSoft: '#f6ecd6' };
+const HEART_PATH = 'M12 21s-7.5-4.6-9.6-9.2C.9 8.5 2.9 4.5 6.6 4.5c2.1 0 3.6 1.2 5.4 3.2 1.8-2 3.3-3.2 5.4-3.2 3.7 0 5.7 4 4.2 7.3C19.5 16.4 12 21 12 21z';
+function rrect(g, x, y, w, h, r, fill, stroke) {
+  g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r);
+  g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
+  if (fill) { g.fillStyle = fill; g.fill(); }
+  if (stroke) { g.strokeStyle = stroke; g.lineWidth = 2; g.stroke(); }
+}
+function wrapLines(g, text, maxW) {
+  const words = String(text).split(/\s+/), lines = [];
+  let line = '';
+  for (const w of words) {
+    const t = line ? line + ' ' + w : w;
+    if (g.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+async function drawWeekCard(sn) {
+  try { await document.fonts.ready; } catch (e) { /* fonts optional */ }
+  const W = 1080, H = 1350, c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const g = c.getContext('2d'), ar = S.lang === 'ar', K = KX(), t = L();
+  const sans = (w, s) => `${w} ${s}px "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif`;
+  const disp = (s) => (ar ? `700 ${s}px Amiri, "Traditional Arabic", serif` : `italic 500 ${s}px Newsreader, Georgia, serif`);
+  g.direction = ar ? 'rtl' : 'ltr';
+  const X = (x) => (ar ? W - x : x);
+  const side = (s) => (ar ? (s === 'left' ? 'right' : s === 'right' ? 'left' : s) : s);
+  g.fillStyle = CARD.bg; g.fillRect(0, 0, W, H);
+
+  // header band
+  rrect(g, 40, 40, W - 80, 250, 36, CARD.accent);
+  g.textAlign = side('left');
+  g.fillStyle = 'rgba(255,255,255,.72)'; g.font = sans(600, 24);
+  g.fillText(K.cardEyebrow, X(90), 105);
+  g.fillStyle = '#ffffff'; g.font = disp(74);
+  g.fillText(K.cardWeek(myName()), X(90), 192);
+  g.fillStyle = 'rgba(255,255,255,.85)'; g.font = sans(400, 28);
+  g.fillText(weekRange(sn), X(90), 248);
+
+  // quarter
+  g.fillStyle = CARD.muted; g.font = sans(500, 25);
+  g.fillText(K.cardQuarter, X(90), 352);
+  g.fillStyle = CARD.accent; g.font = sans(600, 42);
+  g.fillText(sn.range ? rng(sn.range) : '—', X(90), 404);
+  if (sn.heavy) { g.textAlign = side('right'); g.fillStyle = CARD.gold; g.font = sans(600, 24); g.fillText(K.longWeek(sn.hw), X(W - 90), 404); g.textAlign = side('left'); }
+
+  // seven calendar sheets
+  const top = 450, n = 7, gap = 14, w = (W - 180 - gap * (n - 1)) / n, h = 196;
+  for (let i = 0; i < n; i++) {
+    const d = ar ? n - 1 - i : i, day = sn.days[d], x = 90 + i * (w + gap);
+    rrect(g, x + 4, top + 8, w, h, 16, CARD.line);
+    rrect(g, x, top, w, h, 16, CARD.surface, CARD.line);
+    g.save(); g.beginPath(); g.rect(x, top, w, 50); g.clip();
+    rrect(g, x, top, w, h, 16, d === 6 ? CARD.gold : CARD.accent); g.restore();
+    g.fillStyle = '#5b6662';
+    rrect(g, x + w * 0.27, top - 10, 7, 22, 3, '#5b6662'); rrect(g, x + w * 0.73 - 7, top - 10, 7, 22, 3, '#5b6662');
+    g.textAlign = 'center';
+    g.fillStyle = '#ffffff'; g.font = sans(600, 21); g.fillText(t.short[d], x + w / 2, top + 34);
+    g.fillStyle = CARD.ink; g.font = sans(600, 52); g.fillText(num(parseIso(day.date).getDate()), x + w / 2, top + 116);
+    const full = day.b > 0 && day.a === day.b;
+    if (full) {
+      g.beginPath(); g.arc(x + w / 2, top + 160, 17, 0, Math.PI * 2); g.fillStyle = CARD.accent; g.fill();
+      g.strokeStyle = '#fff'; g.lineWidth = 4; g.lineCap = 'round'; g.lineJoin = 'round';
+      g.beginPath(); g.moveTo(x + w / 2 - 8, top + 160); g.lineTo(x + w / 2 - 2, top + 166); g.lineTo(x + w / 2 + 9, top + 153); g.stroke();
+    } else { g.fillStyle = CARD.muted; g.font = sans(500, 23); g.fillText(`${num(day.a)}/${num(day.b)}`, x + w / 2, top + 168); }
+    if (day.heart) {
+      g.save(); g.translate(x + w / 2 - 15, top + h + 18); g.scale(1.25, 1.25);
+      g.globalAlpha = 0.35 + day.heart * 0.13; g.fillStyle = CARD.gold; g.fill(new Path2D(HEART_PATH)); g.restore();
+    }
+  }
+  g.textAlign = side('left');
+
+  // stats
+  const sy = 720, tw = (W - 180 - 40) / 3;
+  const stats = [[K.cardTicked, `${num(sn.done)}/${num(sn.total)}`], [K.cardTasmee, sn.tasmee ? `✓ ${K.done}` : K.notYet], [K.cardVerses, num(sn.verses)]];
+  stats.forEach(([lbl, val], i) => {
+    const x = 90 + i * (tw + 20);
+    rrect(g, x, sy, tw, 140, 22, CARD.surface, CARD.line);
+    g.textAlign = 'center';
+    g.fillStyle = CARD.muted; g.font = sans(500, 23); g.fillText(lbl, x + tw / 2, sy + 50);
+    g.fillStyle = i === 1 && sn.tasmee ? CARD.accent : CARD.ink; g.font = sans(600, 44); g.fillText(val, x + tw / 2, sy + 108);
+  });
+
+  // reward
+  const ry = 890;
+  rrect(g, 90, ry, W - 180, 150, 22, sn.success ? CARD.goldSoft : CARD.surface, sn.success ? CARD.gold : CARD.line);
+  g.textAlign = side('left');
+  g.fillStyle = CARD.gold; g.font = sans(600, 23);
+  g.fillText(sn.success ? `${K.cardReward} · ${K.unlockedTag}`.replace(' · ', ar ? ' — ' : ' · ') : K.cardReward, X(122), ry + 46);
+  g.fillStyle = CARD.ink; g.font = sans(500, 32);
+  wrapLines(g, sn.reward || K.cardNoReward, W - 260).slice(0, 2).forEach((ln, i) => g.fillText(ln, X(122), ry + 94 + i * 42));
+
+  // quote
+  g.textAlign = 'center';
+  g.fillStyle = CARD.ink; g.font = `400 46px Amiri, "Traditional Arabic", serif`; g.direction = 'rtl';
+  g.fillText('«أحبُّ الأعمال إلى الله أدومُها وإن قلَّ»', W / 2, 1118);
+  g.direction = ar ? 'rtl' : 'ltr';
+  if (!ar) { g.fillStyle = CARD.muted; g.font = `italic 400 25px Newsreader, Georgia, serif`; g.fillText(K.cardQuote, W / 2, 1162); }
+  g.fillStyle = CARD.gold; g.font = sans(500, 22); g.fillText(K.cardSrc, W / 2, ar ? 1164 : 1200);
+
+  // quarters progress toward a ḥizb
+  const q = sn.quarters, inH = q % 4;
+  g.textAlign = side('left'); g.fillStyle = CARD.muted; g.font = sans(500, 24);
+  g.fillText(K.cardQuarters(qty(q)), X(90), 1262);
+  for (let i = 0; i < 4; i++) {
+    const segW = 60, x = W - 90 - (4 - i) * (segW + 8) + 8, fillAmt = Math.max(0, Math.min(1, inH - i));
+    const xx = ar ? W - x - segW : x;
+    rrect(g, xx, 1246, segW, 16, 8, CARD.line);
+    if (fillAmt > 0) rrect(g, ar ? xx + segW * (1 - fillAmt) : xx, 1246, segW * fillAmt, 16, 8, CARD.gold);
+  }
+  return c;
+}
+
+// ---- saving files: platform download prompt in the app, plain download in the standalone file
+async function saveFile(filename, data) {
+  let dl = null;
+  try { dl = window.claude && typeof window.claude.use === 'function' ? await window.claude.use('downloads') : null; } catch (e) { dl = null; }
+  if (dl) {
+    try { await dl.save({ filename, data }); return 'saved'; }
+    catch (e) { return e && e.code === 'declined' ? 'declined' : 'error'; }
+  }
+  try {
+    const blob = data instanceof Blob ? data : new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    return 'saved';
+  } catch (e) { return 'error'; }
+}
+const canvasBlob = (c) => new Promise((res) => c.toBlob(res, 'image/png'));
+function keepStatus(msg) { const el = $('#keepStatus'); el.textContent = msg; clearTimeout(keepStatus.t); keepStatus.t = setTimeout(() => (el.textContent = ''), 5000); }
+async function saveCard(sn) {
+  const c = await drawWeekCard(sn);
+  const blob = await canvasBlob(c);
+  const who = myName() ? myName().replace(/[\\/:*?"<>|]/g, '') + ' - ' : '';
+  const r = await saveFile(`${who}Quarter by Quarter - week of ${sn.key}.png`, blob);
+  keepStatus(r === 'saved' ? KX().savedImg : r === 'declined' ? KX().declined : KX().noSave);
+}
+
+let previewTimer = 0;
+function renderKeep() {
+  const K = KX();
+  $('#keepTitle').textContent = K.keepTitle;
+  $('#keepLede').textContent = K.keepLede;
+  $('#saveCardBtn').textContent = K.saveCard;
+  $('#saveBackupBtn').textContent = K.saveBackup;
+  $('#restoreLbl').textContent = K.restore;
+  $('#restoreQ').textContent = K.restoreQ;
+  $('#restoreYes').textContent = K.restoreYes;
+  $('#restoreNo').textContent = K.restoreNo;
+  $('#pastTitle').textContent = K.pastTitle;
+  const hist = S.history || [];
+  $('#pastList').innerHTML = hist.length ? hist.map((h, i) => {
+    const hearts = h.days.map((d) => `<span class="ph" style="--h:${d.heart}">${d.heart ? HEART_SVG : ''}</span>`).join('');
+    return `<li class="past-item${h.success ? ' won' : ''}"><div class="past-top"><strong>${esc(weekRange(h))}</strong>
+      <button type="button" class="toggle past-save" data-i="${i}">${esc(K.saveImgShort)}</button></div>
+      <div class="past-meta">${esc(h.range ? rng(h.range) : '—')}${SEP()}${num(h.done)}/${num(h.total)}${SEP()}${esc(K.cardTasmee)}: ${esc(h.tasmee ? K.done : K.notYet)}${h.success ? `${SEP()}${esc(K.unlockedTag)}` : ''}</div>
+      <div class="past-hearts" aria-hidden="true">${hearts}</div></li>`;
+  }).join('') : `<li class="past-item empty">${esc(K.pastEmpty)}</li>`;
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(async () => {
+    try { const c = await drawWeekCard(snapshot(WEEK)); $('#cardPreview').src = c.toDataURL('image/png'); $('#cardPreview').alt = `${K.cardWeek(myName())}, ${weekRange(snapshot(WEEK))}`; } catch (e) { /* preview optional */ }
+  }, 350);
+}
+
+let nameEditing = false;
+function renderName() {
+  const K = KX(), n = myName();
+  $('#planOf').hidden = !n;
+  if (n) $('#planOf').textContent = K.planOf(n);
+  const box = $('#hello');
+  if (n && !nameEditing) {
+    box.innerHTML = `<p class="hello-line">${esc(K.hello(n))} <button type="button" class="linkbtn" id="nameEdit">${esc(K.edit)}</button></p>`;
+  } else {
+    box.innerHTML = `<form class="name-form" id="nameForm"><label for="nameIn">${esc(K.helloQ)}</label>
+      <span class="name-row"><input type="text" id="nameIn" maxlength="30" autocomplete="given-name" placeholder="${esc(K.namePh)}" value="${esc(n)}">
+      <button type="submit" class="toggle save">${esc(K.saveName)}</button></span></form>`;
+  }
+}
+
+function setupKeep() {
+  $('#hello').addEventListener('click', (e) => {
+    if (e.target.id === 'nameEdit') { nameEditing = true; renderName(); $('#nameIn').focus(); }
+  });
+  $('#hello').addEventListener('submit', (e) => {
+    e.preventDefault();
+    S.name = $('#nameIn').value.trim().slice(0, 30);
+    nameEditing = false; save(); renderName(); renderDynamic();
+  });
+  $('#saveCardBtn').addEventListener('click', () => saveCard(snapshot(WEEK)));
+  $('#rewardCardBtn').addEventListener('click', () => saveCard(snapshot(WEEK)));
+  $('#pastList').addEventListener('click', (e) => {
+    const b = e.target.closest('.past-save');
+    if (b) saveCard((S.history || [])[+b.dataset.i]);
+  });
+  $('#saveBackupBtn').addEventListener('click', async () => {
+    const data = JSON.stringify({ app: 'quarter-by-quarter', v: 1, savedAt: new Date().toISOString(), state: S }, null, 1);
+    const r = await saveFile(`Quarter by Quarter backup ${isoDate(new Date())}.json`, data);
+    keepStatus(r === 'saved' ? KX().savedBackup : r === 'declined' ? KX().declined : KX().noSave);
+  });
+  let pending = null;
+  $('#restoreFile').addEventListener('change', (e) => {
+    const f = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!f) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      try {
+        const obj = JSON.parse(rd.result);
+        if (!obj || obj.app !== 'quarter-by-quarter' || typeof obj.state !== 'object') throw new Error('bad');
+        pending = obj.state;
+        $('#restoreConfirm').hidden = false;
+      } catch (err) { keepStatus(KX().badFile); }
+    };
+    rd.readAsText(f);
+  });
+  $('#restoreLbl').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('#restoreFile').click(); } });
+  $('#restoreNo').addEventListener('click', () => { pending = null; $('#restoreConfirm').hidden = true; });
+  $('#restoreYes').addEventListener('click', () => {
+    if (!pending) return;
+    for (const k of Object.keys(S)) delete S[k];
+    Object.assign(S, JSON.parse(JSON.stringify(defaults)), pending);
+    pending = null; $('#restoreConfirm').hidden = true;
+    archiveOldWeeks(); save(); renderStatic(); renderDynamic();
+    keepStatus(KX().restored);
+  });
+  $('#partPick').addEventListener('change', (e) => {
+    S.partPick = { [WEEK]: { ...(((S.partPick || {})[WEEK]) || {}), [sel]: +e.target.value } };
+    save(); renderStrip(); renderDay(); renderReward();
+  });
+}
+
+// ---------------------------------------------------------------- progress
+const dayProg = (d) => ((S.progress[WEEK] || {})[d]) || {};
+function setDone(d, id, v) {
+  S.progress = { [WEEK]: { ...(S.progress[WEEK] || {}) } }; // keep only the current week
+  const cur = { ...dayProg(d) };
+  if (v) cur[id] = true; else delete cur[id];
+  S.progress[WEEK][d] = cur;
+  save();
+}
+function tally(d) {
+  const bs = blocks(d), prog = dayProg(d);
+  const req = bs.filter((b) => !b.optional && !b.group);
+  let total = req.length, done = req.filter((b) => prog[b.id]).length;
+  if (bs.some((b) => b.group)) { total += 1; if (bs.some((b) => b.group && prog[b.id])) done += 1; }
+  return [done, total];
+}
+
+// ---------------------------------------------------------------- render
+const CHECK = '<svg viewBox="0 0 16 16" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>';
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function renderStatic() {
+  const t = L();
+  document.documentElement.lang = S.lang;
+  document.documentElement.dir = S.lang === 'ar' ? 'rtl' : 'ltr';
+  document.title = t.title;
+  document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = t[el.dataset.t]; });
+  $('#langBtn').textContent = t.langBtn;
+  $('#langBtn').lang = S.lang === 'ar' ? 'en' : 'ar';
+
+  const sel = $('#start');
+  sel.innerHTML = '';
+  for (let m = 600; m <= 780; m += 15) {
+    const o = document.createElement('option');
+    o.value = m; o.textContent = clock(m); if (m === S.start) o.selected = true;
+    sel.appendChild(o);
+  }
+
+  // review inputs
+  const revs = $('#revs');
+  revs.querySelectorAll('.rev').forEach((n) => n.remove());
+  [0, 1, 2, 3].forEach((i) => {
+    const row = document.createElement('div');
+    row.className = 'rev';
+    row.innerHTML = `<span class="n">${num(i + 1)}</span><input type="text" id="rev${i}" aria-label="${esc(t.reviewQ)} ${i + 1}"><span class="when">${esc(t.revWhen[i])}</span>`;
+    revs.appendChild(row);
+    const inp = row.querySelector('input');
+    inp.value = S.reviews[i] || '';
+    inp.placeholder = t.reviewDefault[i];
+    inp.addEventListener('input', () => { S.reviews[i] = inp.value; save(); renderDynamic(); });
+  });
+
+  $('#steps').innerHTML = t.steps.map(([a, b]) => `<li><b>${esc(a)}</b> ${esc(b)}</li>`).join('') +
+    `<li style="list-style:none;margin-inline-start:-1.3em" class="hint">${esc(t.stepTips)}</li>`;
+  const pr = [t.types.new, t.types.recent, t.types.review].map((x, i) => `<span class="pill" style="background:var(--${['accent-soft', 'gold-soft', 'slate-soft'][i]});color:var(--${['accent', 'gold', 'slate'][i]})">${esc(x)}</span>`).join(`<i>${S.lang === 'ar' ? '←' : '→'}</i>`);
+  $('#rules').innerHTML = `<li><b>${esc(t.prioLabel)}</b><div class="prio">${pr}</div></li>` +
+    t.rules.map(([a, b]) => `<li><b>${esc(a)}</b><span>${esc(b)}</span></li>`).join('');
+
+  ['from', 'to', 's1', 's2'].forEach((k) => { $('#' + k).value = S.range[k] || ''; });
+  $('#rFrom').value = S.recent.from || '';
+  $('#rTo').value = S.recent.to || '';
+}
+
+function renderStrip() {
+  const t = L();
+  $('#strip').innerHTML = t.days.map((_, d) => {
+    const date = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + d);
+    const [a, b] = tally(d);
+    const cls = ['day', d === TODAY ? 'today' : '', d === sel ? 'sel' : '', b > 0 && a === b ? 'complete' : ''].join(' ');
+    return `<button type="button" class="${cls}" data-d="${d}" aria-pressed="${d === sel}" aria-label="${esc(t.days[d])}, ${num(a)}/${num(b)}">
+      <span class="dn">${esc(t.short[d])}</span><span class="dd">${num(date.getDate())}</span>
+      <span class="ring" style="--p:${b ? a / b : 0}"></span>${heartDot(d)}${d === 6 ? `<span class="tag">${esc(t.sunTag)}</span>` : ''}</button>`;
+  }).join('');
+}
+
+function renderDay() {
+  const t = L(), d = sel, bs = blocks(d), prog = dayProg(d);
+  const date = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + d);
+  $('#dayTitle').textContent = t.days[d];
+  const isSession = SESSION_DAYS.includes(d);
+  let meta;
+  if (isSession) {
+    const len = isBusy(d) ? 15 : 60;
+    meta = (isBusy(d) ? t.metaBusy : t.metaSession)(clock(S.start), clock(S.start + len));
+  } else meta = d === 6 ? t.metaSun : t.metaLight;
+  $('#dayMeta').textContent = `${date.toLocaleDateString(S.lang === 'ar' ? 'ar-EG' : 'en-GB', { day: 'numeric', month: 'long' })}${SEP()}${meta}${heavy() ? `${SEP()}${t.heavyTag(hw())}` : ''}`;
+  const [a, b] = tally(d);
+  $('#dayCount').textContent = t.done(num(a), num(b));
+
+  $('#dayControls').hidden = !isSession;
+  if (isSession) {
+    const pn = heavy() ? t.portionN : t.partN, pp = parts(), pk = pickedPart(d);
+    $('#partPickLbl').textContent = KX().partPickLbl;
+    $('#partPick').innerHTML = pn.map((nm, i) => `<option value="${i}"${i === pk ? ' selected' : ''}>${esc(nm)}${pp ? `${SEP()}${esc(span(pp[i]))}` : ''}${i === d ? ` (${esc(KX().planned)})` : ''}</option>`).join('');
+    $('#behindNote').hidden = pk === d;
+    $('#behindNote').textContent = KX().behindNote;
+  } else $('#behindNote').hidden = true;
+  const busy = isBusy(d);
+  $('#busyBtn').setAttribute('aria-pressed', busy);
+  $('#busyBtn').textContent = busy ? t.busyOn : t.busyOff;
+
+  let cursor = S.start;
+  let html = '';
+  bs.forEach((blk, i) => {
+    let time = '';
+    if (blk.at) time = `<div class="time"><b>${clockS(blk.at[0])}</b>${S.lang === 'ar' ? 'إلى' : 'to'} ${clockS(blk.at[1])}</div>`;
+    else if (blk.min) { time = `<div class="time"><b>${clockS(cursor)}</b>${num(blk.min)} ${S.lang === 'ar' ? 'د' : 'min'}</div>`; cursor += blk.min; }
+    const done = !!prog[blk.id];
+    const pill = t.types[blk.type] || '';
+    const checkable = blk.type !== 'rest';
+    const label = blk.title || pill;
+    if (blk.group && i > 0 && bs[i - 1].group) html += `<li class="or" aria-hidden="true">${esc(t.or)}</li>`;
+    html += `<li class="item t-${blk.type}${time ? '' : ' notime'}${done ? ' done' : ''}">${time}
+      <div class="body"><div class="ttl"><span class="pill">${esc(pill)}</span>${esc(blk.title)}</div>
+      ${blk.sub ? `<div class="sub">${esc(blk.sub)}</div>` : ''}<div class="det">${esc(blk.det)}</div></div>
+      ${checkable ? `<button type="button" class="check" role="checkbox" aria-checked="${done}" aria-label="${esc(label)}" data-id="${blk.id}">${CHECK}</button>` : '<span></span>'}</li>`;
+  });
+  $('#agenda').innerHTML = html;
+  const complete = b > 0 && a === b;
+  $('#doneMsg').hidden = !complete;
+  $('#doneMsg').textContent = (myName() ? KX().doneN(myName()) : t.doneMsg)[d === TODAY ? 0 : 1];
+  renderQuote();
+  renderHeart(complete);
+}
+
+function renderParts() {
+  const t = L(), p = parts(), q = quarter();
+  const names = heavy() ? t.portionN : t.partN;
+  $('#parts').innerHTML = (p ? p.map((r, i) => `<span class="part">${esc(names[i])}${SEP()}${span(r)}</span>`) : names.map((x) => `<span class="part">${esc(x)}</span>`)).join('');
+  $('#sizeNormal').setAttribute('aria-pressed', !heavy());
+  $('#sizeHeavy').setAttribute('aria-pressed', heavy());
+  $('#hw1').setAttribute('aria-pressed', hw() === 1);
+  $('#hw2').setAttribute('aria-pressed', hw() === 2);
+  $('#heavyBox').hidden = !heavy();
+  $('[data-t="newQwhen"]').textContent = heavy() ? t.newQwhenHeavy : t.newQwhen;
+  $('[data-t="p1ends"]').textContent = heavy() ? t.p1endsH : t.p1ends;
+  $('[data-t="p2ends"]').textContent = heavy() ? t.p2endsH : t.p2ends;
+  $('[data-t="splitHint"]').textContent = heavy() ? t.splitHintH : t.splitHint;
+  const nVerses = q ? q[1] - q[0] + 1 : 0;
+  $('#heavyHint').hidden = heavy() || !q || nVerses > 12;
+  if (q) $('#heavyHint').textContent = t.heavyHint(num(nVerses));
+  if (q && document.activeElement !== $('#h1')) { $('#h1').placeholder = num(halfEnd(q[0], q[1])); $('#h1').value = S.range.h1 || ''; }
+  $('#splits').hidden = !q || !p;
+  if (p) {
+    if (document.activeElement !== $('#s1')) $('#s1').placeholder = num(p[0][1]);
+    if (document.activeElement !== $('#s2')) $('#s2').placeholder = num(p[1][1]);
+  }
+}
+
+function renderGlance() {
+  const t = L(), R = [0, 1, 2, 3].map(revName);
+  const head = `<thead><tr><th></th>${t.short.map((x, d) => `<th class="${d === TODAY ? 'today' : ''}">${esc(x)}</th>`).join('')}</tr></thead>`;
+  const rows = [
+    [t.rowNew, heavy() ? t.gNewH(hw()) : t.gNew],
+    [t.rowReview, [R[0], R[1], R[2], '—', '—', '—', t.gAll]],
+    [t.rowRecent, t.gRecent],
+    [t.rowListen, t.gListen(R[0], R[3])],
+  ];
+  $('#glance').innerHTML = head + '<tbody>' + rows.map(([h, cells]) =>
+    `<tr><th>${esc(h)}</th>${cells.map((c, d) => `<td class="${[d === 6 ? 'sun' : '', d === TODAY ? 'today' : ''].join(' ')}">${esc(c)}</td>`).join('')}</tr>`).join('') + '</tbody>';
+}
+
+function renderBanner() {
+  const q = quarter();
+  const show = !bannerDismissed && S.weekKey && S.weekKey !== WEEK && q;
+  $('#banner').hidden = !show;
+  if (!show) return;
+  const nextHalf = heavy() && hw() === 1 && q[1] - q[0] >= 5;
+  $('#nbInputs').hidden = nextHalf;
+  $('#nbHalf2').hidden = !nextHalf;
+  $('#nbRepeat').hidden = !nextHalf;
+  if (nextHalf) { $('#bannerText').textContent = L().bannerHalf(rng([halfEnd(q[0], q[1]) + 1, q[1]])); return; }
+  $('#bannerText').textContent = L().bannerText(rng(q));
+  const len = q[1] - q[0] + 1;
+  if (!$('#nbFrom').value) $('#nbFrom').value = Math.min(200, q[1] + 1);
+  if (!$('#nbTo').value) $('#nbTo').value = Math.min(200, q[1] + len);
+}
+
+function renderHow() {
+  const t = L(), a = active();
+  const items = heavy() ? [t.howHeavy(hw(), a ? rng(a) : ''), ...t.how.slice(1)] : t.how;
+  $('#howList').innerHTML = items.map((x) => `<li>${x}</li>`).join('');
+}
+
+function renderDynamic() { renderName(); renderExtras(); renderHow(); renderStrip(); renderDay(); renderParts(); renderGlance(); renderBanner(); renderReward(); renderKeep(); }
+
+// ---------------------------------------------------------------- events
+$('#langBtn').addEventListener('click', () => { S.lang = S.lang === 'en' ? 'ar' : 'en'; save(); renderStatic(); renderDynamic(); });
+$('#strip').addEventListener('click', (e) => {
+  const b = e.target.closest('.day');
+  if (!b) return;
+  sel = +b.dataset.d;
+  quoteShift = 0;
+  renderStrip(); renderDay();
+});
+$('#agenda').addEventListener('click', (e) => {
+  const c = e.target.closest('.check');
+  if (!c) return;
+  setDone(sel, c.dataset.id, c.getAttribute('aria-checked') !== 'true');
+  renderStrip(); renderDay(); renderReward();
+});
+$('#start').addEventListener('change', (e) => { S.start = +e.target.value; save(); renderDay(); });
+$('#busyBtn').addEventListener('click', () => {
+  const k = `${WEEK}:${sel}`;
+  if (S.busy[k]) delete S.busy[k]; else S.busy[k] = true;
+  for (const key of Object.keys(S.busy)) if (!key.startsWith(WEEK)) delete S.busy[key];
+  save(); renderStrip(); renderDay(); renderReward();
+});
+['from', 'to'].forEach((k) => $('#' + k).addEventListener('input', (e) => {
+  S.range[k] = e.target.value; S.range.s1 = ''; S.range.s2 = ''; S.range.h1 = '';
+  $('#s1').value = ''; $('#s2').value = '';
+  S.weekKey = WEEK; save(); renderDynamic();
+}));
+['s1', 's2'].forEach((k) => $('#' + k).addEventListener('input', (e) => { S.range[k] = e.target.value; save(); renderDynamic(); }));
+$('#rFrom').addEventListener('input', (e) => { S.recent.from = e.target.value; save(); renderDynamic(); });
+$('#rTo').addEventListener('input', (e) => { S.recent.to = e.target.value; save(); renderDynamic(); });
+$('#nbOk').addEventListener('click', () => {
+  const f = parseInt($('#nbFrom').value, 10), t = parseInt($('#nbTo').value, 10);
+  const q = quarter();
+  if (!valid(f, t)) { $('#nbFrom').focus(); return; }
+  if (q) S.recent = { from: String(q[0]), to: String(q[1]) };
+  S.range = { from: String(f), to: String(t), s1: '', s2: '', h1: '' };
+  S.size = 'normal'; S.hw = 1;
+  S.weekKey = WEEK;
+  save(); renderStatic(); renderDynamic();
+});
+$('#rewardIdeas').addEventListener('click', (e) => { const b = e.target.closest('.idea'); if (b) setReward(b.getAttribute('aria-pressed') === 'true' ? '' : b.textContent); });
+$('#rewardBig').addEventListener('click', (e) => { const b = e.target.closest('.idea'); if (b) setReward(b.getAttribute('aria-pressed') === 'true' ? '' : b.textContent); });
+$('#rewardCustom').addEventListener('input', (e) => { S.reward = { [WEEK]: e.target.value }; save(); });
+$('#rewardCustom').addEventListener('change', () => renderReward());
+$('#quoteNext').addEventListener('click', () => { quoteShift += 1; renderQuote(); });
+const resetSplits = () => { S.range.s1 = ''; S.range.s2 = ''; $('#s1').value = ''; $('#s2').value = ''; };
+$('#sizeNormal').addEventListener('click', () => { S.size = 'normal'; S.hw = 1; resetSplits(); save(); renderDynamic(); });
+$('#sizeHeavy').addEventListener('click', () => { S.size = 'heavy'; S.hw = 1; resetSplits(); save(); renderDynamic(); });
+$('#hw1').addEventListener('click', () => { S.hw = 1; resetSplits(); save(); renderDynamic(); });
+$('#hw2').addEventListener('click', () => { S.hw = 2; resetSplits(); save(); renderDynamic(); });
+$('#h1').addEventListener('input', (e) => { S.range.h1 = e.target.value; resetSplits(); save(); renderDynamic(); });
+$('#nbHalf2').addEventListener('click', () => { S.hw = 2; resetSplits(); S.weekKey = WEEK; save(); renderStatic(); renderDynamic(); });
+$('#nbRepeat').addEventListener('click', () => { S.weekKey = WEEK; save(); renderDynamic(); });
+$('#nbLater').addEventListener('click', () => { bannerDismissed = true; renderBanner(); });
+
+// ---------------------------------------------------------------- go
+if (!S.weekKey || !quarter()) { if (!S.weekKey) S.weekKey = WEEK; }
+archiveOldWeeks();
+save(false);
+setupExtras();
+setupKeep();
+renderStatic();
+renderDynamic();
+})();
+</script>
+
+<script type="module">
+// ---- cloud sync: Google sign-in + Firestore (users/{uid}); works offline, local copy stays as before
+const V = '11.0.2';
+const box = document.getElementById('acct');
+const TX = {
+  en: { cta: 'Save my progress with Google', hint: 'so it stays safe and opens on any device', saved: 'Progress saved to', saving: 'Saving…', offline: 'Offline — will save when you’re back online', err: 'Couldn’t save — will retry', out: 'Sign out', fail: 'Sign-in didn’t finish. Try again.' },
+  ar: { cta: 'احفظ تقدّمك بحساب Google', hint: 'عشان يفضل محفوظ ويفتح من أي جهاز', saved: 'تقدّمك محفوظ في', saving: 'جارٍ الحفظ…', offline: 'مفيش إنترنت — هيتحفظ أول ما يرجع', err: 'ماتحفظش — هنحاول تاني', out: 'تسجيل الخروج', fail: 'تسجيل الدخول ماكملش. جرّب تاني.' },
+};
+const tx = () => TX[document.documentElement.lang === 'ar' ? 'ar' : 'en'];
+const G = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.5 30.2 0 24 0 14.6 0 6.6 5.4 2.7 13.2l7.8 6C12.4 13.7 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.8c-.5-1.5-.8-3.1-.8-4.8s.3-3.3.8-4.8l-7.8-6C1 16.5 0 20.1 0 24s1 7.5 2.7 10.8l7.8-6z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.2-13.5-10l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>';
+const esc = (s) => String(s || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let user = null, status = 'ok', failed = false;
+function draw() {
+  const t = tx();
+  box.hidden = false;
+  if (!user) {
+    box.innerHTML = `<button type="button" class="gbtn" id="gIn">${G}${esc(t.cta)}</button><span>${esc(failed ? t.fail : t.hint)}</span>`;
+    document.getElementById('gIn').onclick = signIn;
+  } else {
+    const label = status === 'busy' ? t.saving : status === 'off' ? t.offline : status === 'err' ? t.err : `${t.saved} <span class="who">${esc(user.email || user.displayName)}</span>`;
+    box.innerHTML = `<span class="dot ${status === 'ok' ? '' : status}"></span><span>${label}</span><button type="button" class="linkbtn" id="gOut">${esc(t.out)}</button>`;
+    document.getElementById('gOut').onclick = () => fb.signOut(fb.auth);
+  }
+}
+new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+
+let fb = null;
+async function boot() {
+  let cfg;
+  try { const r = await fetch('/__/firebase/init.json'); if (!r.ok) return; cfg = await r.json(); } catch (e) { return; } // not on Firebase Hosting: stay local-only
+  if (/\.(web\.app|firebaseapp\.com)$/.test(location.hostname)) cfg.authDomain = location.hostname; // keeps redirect sign-in first-party
+  const [appM, authM, fsM] = await Promise.all([
+    import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`),
+    import(`https://www.gstatic.com/firebasejs/${V}/firebase-auth.js`),
+    import(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore.js`),
+  ]);
+  const app = appM.initializeApp(cfg);
+  const auth = authM.getAuth(app);
+  await authM.setPersistence(auth, authM.browserLocalPersistence).catch(() => {});
+  let db;
+  try { db = fsM.initializeFirestore(app, { localCache: fsM.persistentLocalCache({ tabManager: fsM.persistentMultipleTabManager() }) }); }
+  catch (e) { db = fsM.getFirestore(app); }
+  fb = { auth, signOut: authM.signOut, authM, fsM, db };
+  authM.getRedirectResult(auth).catch(() => { failed = true; draw(); });
+  authM.onAuthStateChanged(auth, (u) => { user = u; failed = false; attach(); draw(); });
+  draw();
+}
+
+async function signIn() {
+  const { authM, auth } = fb; const p = new authM.GoogleAuthProvider();
+  p.setCustomParameters({ prompt: 'select_account' });
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  try {
+    if (standalone) await authM.signInWithRedirect(auth, p);
+    else await authM.signInWithPopup(auth, p);
+  } catch (e) {
+    if (['auth/popup-blocked', 'auth/operation-not-supported-in-this-environment', 'auth/cancelled-popup-request'].includes(e.code)) {
+      try { await authM.signInWithRedirect(auth, p); return; } catch (e2) { /* fall through */ }
+    }
+    if (e.code !== 'auth/popup-closed-by-user') { failed = true; draw(); }
+  }
+}
+
+// ---- sync
+const DEV = (() => { try { let d = localStorage.getItem('qbq.dev'); if (!d) { d = Math.random().toString(36).slice(2, 10); localStorage.setItem('qbq.dev', d); } return d; } catch (e) { return 'x'; } })();
+let unsub = null, ref = null, timer = 0, pendingRemote = null;
+const localT = () => (window.QBQ.get()._t || 0);
+const setStatus = (s) => { if (status !== s) { status = s; draw(); } };
+function push() {
+  if (!ref) return;
+  clearTimeout(timer);
+  setStatus(navigator.onLine ? 'busy' : 'off');
+  timer = setTimeout(async () => {
+    const S = window.QBQ.get();
+    try {
+      await fb.fsM.setDoc(ref, { state: JSON.stringify(S), t: S._t || Date.now(), dev: DEV });
+      setStatus(navigator.onLine ? 'ok' : 'off');
+    } catch (e) { setStatus('err'); setTimeout(push, 8000); }
+  }, 700);
+}
+const typing = () => { const a = document.activeElement; return a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && a.type !== 'checkbox' && a.type !== 'radio'; };
+function applyRemote(d) {
+  if (typing()) { pendingRemote = d; return; }
+  pendingRemote = null;
+  try { window.QBQ.apply(JSON.parse(d.state)); } catch (e) { /* bad payload: ignore */ }
+}
+document.addEventListener('focusout', () => setTimeout(() => { if (pendingRemote && !typing() && pendingRemote.t > localT()) applyRemote(pendingRemote); }, 50));
+function attach() {
+  if (unsub) { unsub(); unsub = null; }
+  ref = null; window.QBQ.onSave = null;
+  if (!user) return;
+  const { fsM, db } = fb;
+  ref = fsM.doc(db, 'users', user.uid);
+  window.QBQ.onSave = () => push();
+  unsub = fsM.onSnapshot(ref, { includeMetadataChanges: false }, (snap) => {
+    if (snap.metadata.hasPendingWrites) return;
+    const d = snap.data();
+    if (!d) { push(); return; }                 // first time on this account: upload this device's progress
+    if (d.t > localT()) applyRemote(d);         // newer elsewhere: take it
+    else if (d.t < localT()) push();            // this device is ahead: upload
+    else setStatus(navigator.onLine ? 'ok' : 'off');
+  }, () => setStatus('err'));
+}
+addEventListener('online', () => { if (ref) push(); });
+addEventListener('offline', () => { if (ref) setStatus('off'); });
+boot().catch(() => {});
+</script>
+
+
+<script>if('serviceWorker' in navigator){const had=!!navigator.serviceWorker.controller;let done=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had&&!done){done=true;location.reload();}});addEventListener('load',()=>navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{}));}</script>
+</body>
+</html>
